@@ -40,7 +40,7 @@ All settings require `bnomei.redirects.` as prefix.
 - default: `301`
 
 **map**
-- default: A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint.
+- default: A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code.
 
 
 ## Disclaimer
