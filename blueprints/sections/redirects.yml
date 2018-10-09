@@ -1,0 +1,33 @@
+# section plugin-redirects
+
+type: fields
+fields:
+  redirects:
+    type: structure
+    fields:
+      fromuri:
+        label:
+          en: "Old"
+          de: "Alt"
+        type: text
+        required: true
+      touri:
+        label:
+          en: "New"
+          de: "Neu"
+        type: text
+      code:
+        label:
+          en: "Status Code"
+          de: "Status Code"
+        default: '301'
+        type: select
+        options: api
+        api:
+          url: "{{ site.url }}/plugin-redirects/codes"
+          fetch: "codes"
+          text: "{{ item.code }}: {{ item.label }}"
+          value: "{{ item.code }}"
+
+
+
