@@ -28,7 +28,6 @@ Call this snippet before any other code in you templates.
     // followed by my template code...
 ?><!DOCTYPE html>
 <html lang="de">
-<!- ... -->
 ```
 
 > Attention: Make sure to have no chars being outputted between this plugins snippet and your templates code or you might run into validation errors.
