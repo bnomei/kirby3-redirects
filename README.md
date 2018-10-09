@@ -23,7 +23,7 @@ Call this snippet before any other code in you templates.
 **your template**
 ```php
 <?php 
-    snippet("plugin-redirect");
+    snippet("plugin-redirects");
 
     // followed by my template code...
 ?><!DOCTYPE html>
