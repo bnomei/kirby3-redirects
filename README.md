@@ -23,19 +23,7 @@ sections:
     extends: plugin-redirects
 ```
 
-Call this snippet before any other code in you templates.
-
-**your template**
-```php
-<?php 
-    snippet("plugin-redirects");
-
-    // followed by my template code...
-?><!DOCTYPE html>
-<html lang="de">
-```
-
-> Attention: Make sure to have no chars being outputted between this plugins snippet and your templates code or you might run into validation errors.
+Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
 
 ## Settings
 

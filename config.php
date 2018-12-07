@@ -18,6 +18,11 @@
                 snippet('plugin-redirects');
             },
         ],
+        'hooks' => [
+            'route:before' => function () {
+                snippet("plugin-redirects");
+            },
+        ],
         'routes' => [
             [
                 'pattern' => 'plugin-redirects/codes',
