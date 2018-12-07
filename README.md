@@ -4,9 +4,14 @@
 
 Setup [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection)  Redirects from within the Kirby Panel.
 
-This plugin is free but if you use it in a commercial project please consider to [make a donation 🍻](https://www.paypal.me/bnomei/0.5).
+## Commerical Usage
 
-## Usage
+This plugin is free but if you use it in a commercial project please consider to 
+- [make a donation 🍻](https://www.paypal.me/bnomei/0.5) or
+- [buy me ☕](https://buymeacoff.ee/bnomei) or
+- [buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170)
+
+## Setup
 
 Add the `plugin-redirects` section to your `site.yml` and add redirects in the panel.
 
