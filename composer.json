@@ -2,36 +2,60 @@
     "name": "bnomei/kirby3-redirects",
     "type": "plugin",
     "description": "Setup HTTP Status Code Redirects from within the Kirby Panel",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "license": "MIT",
-    "autoload": {
-      "files": [
-        "config.php"
-      ],
-      "psr-4": {
-          "Bnomei\\": "classes/"
-      }
-    },
     "authors": [
         {
             "name": "Bruno Meilick",
             "email": "b@bnomei.com"
         }
     ],
+    "keywords": [
+        "kirby3",
+        "kirby3-cms",
+        "kirby3-plugin",
+        "redirect",
+        "301",
+        "302",
+        "status-codes",
+        "header",
+        "redirects"
+    ],
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+            "config.php"
+        ],
+        "psr-4": {
+            "Bnomei\\": "classes/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
     "repositories": [
         {
-          "type": "vcs",
-          "url": "https://github.com/k-next/kirby"
+            "type": "vcs",
+            "url": "https://github.com/k-next/kirby"
         }
-      ],
+    ],
     "require": {
-        "getkirby/cms": "dev-master as 3.0.0"
+        "php": ">=7.1.0",
+        "getkirby/cms": "^3.0.0-RC-2.0"
     },
-    "require-dev" : {
+    "conflict": {
+        "getkirby/kirby": "<3.0"
     },
     "scripts": {
-        "build": "composer update --ignore-platform-reqs; composer dumpautoload -o;",
-        "zip": "rm kirby3-redirects.zip; composer update --ignore-platform-reqs; composer remove getkirby/cms; composer dumpautoload -o; zip -r kirby3-redirects.zip . -x *.git*; composer require getkirby/cms:'dev-master as 3.0.0' --ignore-platform-reqs; composer dumpautoload -o;"
-    },
-    "minimum-stability": "beta"
+        "zip": [
+            "rm kirby3-redirects.zip",
+            "composer install --no-dev",
+            "composer remove getkirby/cms",
+            "composer dumpautoload -o",
+            "zip -r kirby3-redirects.zip . -x *.git*",
+            "composer require getkirby/cms:'^3.0.0-RC-2.0'"
+        ]
+    }
 }

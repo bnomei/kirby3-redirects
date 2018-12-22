@@ -2,6 +2,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude('vendor')
+    ->exclude('kirby')
+    ->exclude('blueprints')
     ->in(__DIR__)
 ;
 
