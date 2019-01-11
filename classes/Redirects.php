@@ -16,17 +16,19 @@ class Redirects
         }
         $map = array_merge($map, \Kirby\Toolkit\A::get($options, 'map', []));
         $siteurl = site()->url();
+        $sitebase = \Kirby\Http\Url::path($siteurl);
         $sitepath = strtok($_SERVER["REQUEST_URI"], '?');
 
         foreach ($map as $redirects) {
             $fromuri = \Kirby\Toolkit\A::get($redirects, 'fromuri');
-            $fromuri = '/'.trim(str_replace($siteurl, '', $fromuri), '/');
+            $fromuri = '/' . $sitebase . '/' . trim(str_replace($siteurl, '', $fromuri), '/');
 
             if ($fromuri != $sitepath) {
                 continue;
             }
 
-            $touri = '/'.trim(\Kirby\Toolkit\A::get($redirects, 'touri'), '/');
+            $touri = '/' . trim(\Kirby\Toolkit\A::get($redirects, 'touri'), '/');
+
             if ($page = page($touri)) {
                 $touri = $page->url();
             } else {
