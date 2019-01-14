@@ -21,7 +21,7 @@ class Redirects
 
         foreach ($map as $redirects) {
             $fromuri = \Kirby\Toolkit\A::get($redirects, 'fromuri');
-            $fromuri = $sitebase . '/' . trim(str_replace($siteurl, '', $fromuri), '/');
+            $fromuri = '/' . $sitebase . '/' . trim(str_replace($siteurl, '', $fromuri), '/');
 
             if ($fromuri != $sitepath) {
                 continue;
