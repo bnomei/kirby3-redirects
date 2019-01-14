@@ -20,10 +20,12 @@ Add the `plugin-redirects` section to your `site.yml` and add redirects in the p
 sections:
   # ...other sections
   redirects:
-    extends: plugin-redirects
+    extends: plugin-redirects3xx
 ```
 
-Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
+> If you need all http codes you can use `extends: plugin-redirects` instead which calls the api to retrieve them (once for each redirect). This is not advised if you have a lot of redirects.
+
+> Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
 
 ## Settings
 

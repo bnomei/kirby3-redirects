@@ -1,0 +1,32 @@
+# section plugin-redirects3xx
+
+type: fields
+fields:
+  redirects:
+    type: structure
+    fields:
+      fromuri:
+        label:
+          en: "Old"
+          de: "Alt"
+        type: text
+        required: true
+      touri:
+        label:
+          en: "New"
+          de: "Neu"
+        type: text
+      code:
+        label:
+          en: "Status Code"
+          de: "Status Code"
+        default: '301'
+        type: select
+        options:
+          300: '300: Multiple Choices'
+          301: '301: Moved Permanently'
+          302: '302: Found'
+          303: '303: See Other'
+          304: '304: Not Modified'
+          307: '307: Temporary Redirect'
+          308: '308: Permanent Redirect'

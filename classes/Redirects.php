@@ -15,12 +15,13 @@ class Redirects
             $map = [];
         }
         $map = array_merge($map, \Kirby\Toolkit\A::get($options, 'map', []));
-        $siteurl = site()->url();
-        $sitepath = strtok($_SERVER["REQUEST_URI"], '?');
+        $siteurl = site()->url(); // a) www.example.com or b) www.example.com/subfolder
+        $sitepath = strtok($_SERVER["REQUEST_URI"], '?'); // / or /page or /subfolder or /subfolder/page
+        $sitebase = \Kirby\Http\Url::path($siteurl);
 
         foreach ($map as $redirects) {
             $fromuri = \Kirby\Toolkit\A::get($redirects, 'fromuri');
-            $fromuri = '/'.trim(str_replace($siteurl, '', $fromuri), '/');
+            $fromuri = $sitebase . '/' . trim(str_replace($siteurl, '', $fromuri), '/');
 
             if ($fromuri != $sitepath) {
                 continue;
@@ -41,5 +42,21 @@ class Redirects
             \Kirby\Http\Header::redirect($touri, $code);
             break;
         }
+    }
+
+    public static function codes()
+    {
+        $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
+        if (!$codes) {
+            $codes =  [];
+            foreach (\Kirby\Http\Header::$codes as $code => $label) {
+                $codes[] = [
+                    'code' => str_replace('_', '', $code),
+                    'label' => $label,
+                ];
+            }
+            kirby()->cache('bnomei.redirects')->set('httpcodes', $codes);
+        }
+        return $codes;
     }
 }
