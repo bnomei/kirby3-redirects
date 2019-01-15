@@ -6,7 +6,7 @@ class Redirects
 {
     public static function redirects($options = [])
     {
-        $statusCode = option('bnomei.redirects.code', \Kirby\Toolkit\A::get($options, 'code', 301));
+        $statusCode = intval(str_replace('_', '', option('bnomei.redirects.code', \Kirby\Toolkit\A::get($options, 'code', 301))));
         $map = option('bnomei.redirects.map', []);
         if (is_callable($map)) {
             $map = $map();
@@ -33,7 +33,7 @@ class Redirects
             } else {
                 $touri = url($touri);
             }
-            $code = intval(\Kirby\Toolkit\A::get($redirects, 'code', $statusCode));
+            $code = intval(str_replace('_', '', \Kirby\Toolkit\A::get($redirects, 'code', $statusCode)));
             if (!$code || $code == 0) {
                 $code = $statusCode;
             }
@@ -46,16 +46,19 @@ class Redirects
 
     public static function codes()
     {
+        if(option('debug')) {
+            kirby()->cache('bnomei.redirects')->flush();
+        }
         $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
         if (!$codes) {
             $codes =  [];
             foreach (\Kirby\Http\Header::$codes as $code => $label) {
                 $codes[] = [
-                    'code' => str_replace('_', '', $code),
+                    'code' => $code, // string: _302
                     'label' => $label,
                 ];
             }
-            kirby()->cache('bnomei.redirects')->set('httpcodes', $codes);
+            kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60*24);
         }
         return $codes;
     }
