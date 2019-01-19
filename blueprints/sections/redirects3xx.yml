@@ -23,10 +23,10 @@ fields:
         default: '301'
         type: select
         options:
-          300: '300: Multiple Choices'
-          301: '301: Moved Permanently'
-          302: '302: Found'
-          303: '303: See Other'
-          304: '304: Not Modified'
-          307: '307: Temporary Redirect'
-          308: '308: Permanent Redirect'
+          '_300': '300: Multiple Choices'
+          '_301': '301: Moved Permanently'
+          '_302': '302: Found'
+          '_303': '303: See Other'
+          '_304': '304: Not Modified'
+          '_307': '307: Temporary Redirect'
+          '_308': '308: Permanent Redirect'
