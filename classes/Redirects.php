@@ -16,7 +16,7 @@ class Redirects
         }
         $map = array_merge($map, \Kirby\Toolkit\A::get($options, 'map', []));
         $siteurl = site()->url(); // a) www.example.com or b) www.example.com/subfolder
-        $sitepath = strtok($_SERVER["REQUEST_URI"], '?'); // / or /page or /subfolder or /subfolder/page
+        $sitepath = option('bnomei.redirects.querystring') ? $_SERVER["REQUEST_URI"] : strtok($_SERVER["REQUEST_URI"], '?'); // / or /page or /subfolder or /subfolder/page
         $sitebase = \Kirby\Http\Url::path($siteurl, true, true);
 
         foreach ($map as $redirects) {

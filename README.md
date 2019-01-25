@@ -14,7 +14,7 @@ This plugin is free but if you use it in a commercial project please consider to
 ## Installation
 
 - for devkit-setup use `composer require bnomei/kirby3-redirects` or
-- extract latest release of [kirby3-redirects.zip](https://github.com/bnomei/kirby3-redirects/releases/download/v1.1.8/kirby3-redirects.zip) as folder `site/plugins/kirby3-redirects`
+- extract latest release of [kirby3-redirects.zip](https://github.com/bnomei/kirby3-redirects/releases/download/v1.1.9/kirby3-redirects.zip) as folder `site/plugins/kirby3-redirects`
 
 > Installation as a gitsubmodule is *not* supported.
 
@@ -40,6 +40,10 @@ All settings require `bnomei.redirects.` as prefix.
 
 **code**
 - default: `301`
+
+**querystring**
+- default: `false` do **not** keep querystring in request URI
+- example: `https://devkit.bnomei.com/hello/world.php?q=uerystring` => `hello/world.php`
 
 **map**
 - default: A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code.

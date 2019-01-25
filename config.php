@@ -2,6 +2,7 @@
     Kirby::plugin('bnomei/redirects', [
         'options' => [
             'code' => 301,
+            'querystring' => false,
             'map' => function () {
                 $redirects = kirby()->site()->redirects();
                 return $redirects->isEmpty() ? [] : $redirects->yaml();
