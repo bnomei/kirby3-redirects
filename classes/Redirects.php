@@ -46,7 +46,7 @@ class Redirects
 
     public static function codes()
     {
-        if(option('debug')) {
+        if (option('debug')) {
             kirby()->cache('bnomei.redirects')->flush();
         }
         $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
