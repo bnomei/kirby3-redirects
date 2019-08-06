@@ -15,8 +15,8 @@ class Redirects
             $map = [];
         }
         $map = array_merge($map, \Kirby\Toolkit\A::get($options, 'map', []));
-        $siteurl = site()->url(); // a) www.example.com or b) www.example.com/subfolder
-        $sitepath = option('bnomei.redirects.querystring') ? $_SERVER["REQUEST_URI"] : strtok($_SERVER["REQUEST_URI"], '?'); // / or /page or /subfolder or /subfolder/page
+        $uri = array_key_exists("REQUEST_URI", $_SERVER) ? $_SERVER["REQUEST_URI"] : '/' . kirby()->request()->path();
+        $sitepath = option('bnomei.redirects.querystring') ? $uri : strtok($uri, '?'); // / or /page or /subfolder or /subfolder/page
         $sitebase = \Kirby\Http\Url::path($siteurl, true, true);
 
         foreach ($map as $redirects) {
@@ -58,7 +58,7 @@ class Redirects
                     'label' => $label,
                 ];
             }
-            kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60*24);
+            kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60 * 24);
         }
         return $codes;
     }
