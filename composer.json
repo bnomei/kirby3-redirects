@@ -2,7 +2,7 @@
     "name": "bnomei/kirby3-redirects",
     "type": "kirby-plugin",
     "description": "Setup HTTP Status Code Redirects from within the Kirby Panel",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "license": "MIT",
     "authors": [
         {
