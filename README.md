@@ -4,9 +4,11 @@
 
 Setup [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection)  Redirects from within the Kirby Panel.
 
+Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.html` and send Response-URIs like `https://exter.nal`. This makes it the ideal choice when porting a non Kirby project.
+
 ## Similar Plugin
 
-- [kirby-retour](https://github.com/distantnative/kirby-retour)
+- [kirby-retour](https://github.com/distantnative/kirby-retour) but it can only handle Kirby Routes. It is the better choice when updating a Kirby 2 project or creating a brand new Kirby 3 project.
 
 ## Commerical Usage
 
@@ -45,12 +47,11 @@ All settings require `bnomei.redirects.` as prefix.
 - default: `301`
 
 **querystring**
-- default: `false` do **not** keep querystring in request URI
-- example: `https://devkit.bnomei.com/hello/world.php?q=uerystring` => `hello/world.php`
+- default: `true` do keep querystring in request URI
+- example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12`
 
 **map**
 - default: A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code.
-
 
 ## Disclaimer
 
