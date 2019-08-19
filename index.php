@@ -5,7 +5,7 @@
 Kirby::plugin('bnomei/redirects', [
     'options' => [
         'code' => 301,
-        'querystring' => false,
+        'querystring' => true,
         'map' => function () {
             $redirects = kirby()->site()->redirects();
             return $redirects->isEmpty() ? [] : $redirects->yaml();
@@ -16,17 +16,9 @@ Kirby::plugin('bnomei/redirects', [
         'plugin-redirects' => __DIR__ . '/blueprints/sections/redirects.yml',
         'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml'
     ],
-    'snippets' => [
-        'plugin-redirects' => __DIR__ . '/snippets/plugin-redirects.php',
-    ],
-    'pageMethods' => [
-        'redirects' => function () {
-            snippet('plugin-redirects');
-        },
-    ],
     'hooks' => [
         'route:before' => function () {
-            snippet("plugin-redirects");
+            \Bnomei\Redirects::redirects();
         },
     ],
     'routes' => [
@@ -36,7 +28,7 @@ Kirby::plugin('bnomei/redirects', [
             'action' => function () {
                 $codes = \Bnomei\Redirects::codes();
                 return \Kirby\Http\Response::json(['codes' => $codes]);
-            }
-        ]
-    ]
+            },
+        ],
+    ],
 ]);

@@ -1,0 +1,8 @@
+title: Site
+unlisted: true
+
+sections:
+  pages:
+    type: pages
+  redirects:
+    extends: plugin-redirects3xx

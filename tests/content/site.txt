@@ -1,0 +1,17 @@
+Redirects:
+-
+  fromuri: /building/ahmic
+  touri: projects/ahmic/
+  # missing code will cause fallback to 301
+-
+  fromuri: building/ahmic.html
+  touri: /projects/ahmic
+  code: _302
+-
+  fromuri: /projects?id=1
+  touri: projects/ahmic/
+  code: _303
+-
+  fromuri: /projects/external
+  touri: /external-url
+  code: _301
