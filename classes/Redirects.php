@@ -35,8 +35,11 @@ final class Redirects
         ];
     }
 
-    public function getOptions(): array
+    public function option(?string $key = null)
     {
+        if ($key) {
+            return \Kirby\Toolkit\A::get($this->options, $key);
+        }
         return $this->options;
     }
 
@@ -106,7 +109,7 @@ final class Redirects
     {
         $redirects = new self($options);
         $check = $redirects->checkForRedirect(
-            $redirects->getOptions()
+            $redirects->option()
         );
         if ($check && is_array($check)
             && array_key_exists('uri', $check)

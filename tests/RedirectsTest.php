@@ -20,7 +20,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects/ahmic',
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertNull($check);
     }
 
@@ -31,7 +31,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/building/ahmic',
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 301);
     }
 
@@ -42,7 +42,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/building/ahmic.html',
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 302);
     }
 
@@ -53,7 +53,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects?id=1',
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 303);
     }
 
@@ -64,7 +64,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects/external',
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 301);
     }
 
@@ -90,7 +90,7 @@ class RedirectsTest extends TestCase
             'map' => null
         ];
         $redirects = new Bnomei\Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->getOptions());
+        $check = $redirects->checkForRedirect($redirects->option());
         $this->assertNull($check);
     }
 }
