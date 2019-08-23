@@ -20,6 +20,10 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects/ahmic',
         ];
         $redirects = new Bnomei\Redirects($options);
+
+        $this->assertIsArray($redirects->option());
+        $this->assertEquals('http://homestead.test/', $redirects->option('site.url'));
+
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertNull($check);
     }
