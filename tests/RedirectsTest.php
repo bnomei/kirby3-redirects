@@ -9,8 +9,8 @@ class RedirectsTest extends TestCase
 {
     public function testConstruct()
     {
-        $redirects = new Bnomei\Redirects();
-        $this->assertInstanceOf(Bnomei\Redirects::class, $redirects);
+        $redirects = new Redirects();
+        $this->assertInstanceOf(Redirects::class, $redirects);
     }
 
     public function testDoesNotRedirectOtherPage()
@@ -19,10 +19,11 @@ class RedirectsTest extends TestCase
             'site.url' => 'http://homestead.test/',
             'request.uri' => '/projects/ahmic',
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
 
         $this->assertIsArray($redirects->option());
         $this->assertEquals('http://homestead.test/', $redirects->option('site.url'));
+        $this->assertNull($redirects->option('does not exist'));
 
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertNull($check);
@@ -34,7 +35,7 @@ class RedirectsTest extends TestCase
             'site.url' => 'http://homestead.test/',
             'request.uri' => '/building/ahmic',
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 301);
     }
@@ -45,7 +46,7 @@ class RedirectsTest extends TestCase
             'site.url' => 'http://homestead.test/',
             'request.uri' => '/building/ahmic.html',
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 302);
     }
@@ -56,7 +57,7 @@ class RedirectsTest extends TestCase
             'site.url' => 'http://homestead.test/',
             'request.uri' => '/projects?id=1',
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 303);
     }
@@ -67,21 +68,21 @@ class RedirectsTest extends TestCase
             'site.url' => 'http://homestead.test/',
             'request.uri' => '/projects/external',
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertTrue($check['code'] === 301);
     }
 
     public function testStaticCodes()
     {
-        $codes = Bnomei\Redirects::codes();
+        $codes = Redirects::codes();
         $this->assertIsArray($codes);
         $this->assertCount(25, $codes);
     }
 
     public function testStaticCodesForced()
     {
-        $codes = Bnomei\Redirects::codes(true);
+        $codes = Redirects::codes(true);
         $this->assertIsArray($codes);
         $this->assertCount(25, $codes);
     }
@@ -93,7 +94,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects/ahmic',
             'map' => null
         ];
-        $redirects = new Bnomei\Redirects($options);
+        $redirects = new Redirects($options);
         $check = $redirects->checkForRedirect($redirects->option());
         $this->assertNull($check);
     }

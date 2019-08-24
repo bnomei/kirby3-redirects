@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Bnomei;
 
+use Kirby\Http\Header;
+use Kirby\Http\Url;
+use Kirby\Toolkit\A;
+use function option;
+
 final class Redirects
 {
     /*
@@ -21,14 +26,14 @@ final class Redirects
 
     public function defaultsFromConfig(): array
     {
-        $map = \option('bnomei.redirects.map', []);
+        $map = option('bnomei.redirects.map', []);
         if (is_callable($map)) {
             $map = $map();
         }
 
         return [
-            'code' => $this->normalizeCode(\option('bnomei.redirects.code')),
-            'querystring' => \option('bnomei.redirects.querystring'),
+            'code' => $this->normalizeCode(option('bnomei.redirects.code')),
+            'querystring' => option('bnomei.redirects.querystring'),
             'map' => $map,
             'site.url' => site()->url(), // a) www.example.com or b) www.example.com/subfolder
             'request.uri' => $this->getRequestURI(),
@@ -38,26 +43,26 @@ final class Redirects
     public function option(?string $key = null)
     {
         if ($key) {
-            return \Kirby\Toolkit\A::get($this->options, $key);
+            return A::get($this->options, $key);
         }
         return $this->options;
     }
 
     public function checkForRedirect(array $options): ?array
     {
-        $map = \Kirby\Toolkit\A::get($options, 'map');
+        $map = A::get($options, 'map');
         if (! $map || count($map) === 0) {
             return null;
         }
 
-        $siteurl = \Kirby\Toolkit\A::get($options, 'site.url');
-        $requesturi = \Kirby\Toolkit\A::get($options, 'request.uri');
+        $siteurl = A::get($options, 'site.url');
+        $requesturi = A::get($options, 'request.uri');
 
         foreach ($map as $redirect) {
             if ($this->matchesFromUri($redirect, $requesturi, $siteurl)) {
                 return [
                     'uri' => $this->validateToUri($redirect),
-                    'code' => $this->validateCode($redirect, \Kirby\Toolkit\A::get($options, 'code')),
+                    'code' => $this->validateCode($redirect, A::get($options, 'code')),
                 ];
             }
         }
@@ -66,8 +71,8 @@ final class Redirects
 
     public function matchesFromUri(array $redirect, string $requesturi, string $siteurl): bool
     {
-        $sitebase = \Kirby\Http\Url::path($siteurl, true, true);
-        $fromuri = \Kirby\Toolkit\A::get($redirect, 'fromuri');
+        $sitebase = Url::path($siteurl, true, true);
+        $fromuri = A::get($redirect, 'fromuri');
         $fromuri = '/' . trim($sitebase . str_replace($siteurl, '', $fromuri), '/');
         return $fromuri === $requesturi;
     }
@@ -75,7 +80,7 @@ final class Redirects
     private function getRequestURI(): string
     {
         $uri = array_key_exists("REQUEST_URI", $_SERVER) ? $_SERVER["REQUEST_URI"] : '/' . kirby()->request()->path();
-        $uri = \option('bnomei.redirects.querystring') ? $uri : strtok($uri, '?'); // / or /page or /subfolder or /subfolder/page
+        $uri = option('bnomei.redirects.querystring') ? $uri : strtok($uri, '?'); // / or /page or /subfolder or /subfolder/page
         return $uri;
     }
 
@@ -86,7 +91,7 @@ final class Redirects
 
     private function validateToUri($redirect): string
     {
-        $touri = '/' . trim(\Kirby\Toolkit\A::get($redirect, 'touri'), '/');
+        $touri = '/' . trim(A::get($redirect, 'touri'), '/');
         $page = page($touri);
         if ($page) {
             $touri = $page->url();
@@ -98,7 +103,7 @@ final class Redirects
 
     private function validateCode(array $redirect, int $optionsCode): int
     {
-        $redirectCode = $this->normalizeCode(\Kirby\Toolkit\A::get($redirect, 'code'));
+        $redirectCode = $this->normalizeCode(A::get($redirect, 'code'));
         if (! $redirectCode || $redirectCode === 0) {
             $redirectCode = $optionsCode;
         }
@@ -116,7 +121,7 @@ final class Redirects
             && array_key_exists('code', $check)
         ) {
             // @codeCoverageIgnoreStart
-            \Kirby\Http\Header::redirect($check['uri'], $check['code']);
+            Header::redirect($check['uri'], $check['code']);
             // @codeCoverageIgnoreEnd
         }
     }
@@ -124,7 +129,7 @@ final class Redirects
     public static function codes(bool $force = false): ?array
     {
         $codes = null;
-        if (! $force && ! \option('debug')) {
+        if (! $force && ! option('debug')) {
             $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
         }
         if ($codes) {
@@ -132,7 +137,7 @@ final class Redirects
         }
 
         $codes = [];
-        foreach (\Kirby\Http\Header::$codes as $code => $label) {
+        foreach (Header::$codes as $code => $label) {
             $codes[] = [
                 'code' => $code, // string: _302
                 'label' => $label,
