@@ -19,6 +19,10 @@ Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.
 
 - [kirby-retour](https://github.com/distantnative/kirby-retour) but it can only handle Kirby Routes. It is the better choice when updating a Kirby 2 project or creating a brand new Kirby 3 project.
 
+## Works well with
+
+- [CSV Plugin](https://github.com/bnomei/kirby3-csv) to help you import and export data to the redirects structure.
+
 ## Commerical Usage
 
 This plugin is free but if you use it in a commercial project please consider to 
@@ -50,17 +54,11 @@ sections:
 
 ## Settings
 
-All settings require `bnomei.redirects.` as prefix.
-
-**code**
-- default: `301`
-
-**querystring**
-- default: `true` do keep querystring in request URI
-- example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12`
-
-**map**
-- default: A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code.
+| bnomei.redirects.         | Default        | Description               |            
+|---------------------------|----------------|---------------------------|
+| code | `301` | |
+| querystring | `true` | do keep querystring in request URI. example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12` |
+| map | `callback` | A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
 
 ## Disclaimer
 
