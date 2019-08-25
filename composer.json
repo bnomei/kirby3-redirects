@@ -57,5 +57,12 @@
   },
   "extra": {
     "kirby-cms-path": "tests/kirby"
+  },
+  "suggest": {
+    "bnomei/kirby3-feed": "Add xml-rss and/or json feed",
+    "bnomei/kirby3-robots-txt": "Automatic robots.txt. Detects xmlsitemap.",
+    "bnomei/kirby3-security-headers": "CPS headers to make the the web a saver place. Sensible defaults with zero configuration.",
+    "omz13/kirby3-xmlsitemap": "Adds a xml sitemap",
+    "distantnative/retour-for-kirby": "Better choice than bnomei\\kirby3-redirects if you are porting a Kirby 2 website."
   }
 }
