@@ -18,26 +18,22 @@ final class Redirects
 
     public function __construct(array $options = [])
     {
-        $defaults = $this->defaultsFromConfig();
-        $this->options = array_merge($defaults, $options);
-
-        $this->checkForRedirect($this->options);
-    }
-
-    public function defaultsFromConfig(): array
-    {
-        $map = option('bnomei.redirects.map', []);
-        if (is_callable($map)) {
-            $map = $map();
-        }
-
-        return [
+        $defaults = [
             'code' => $this->normalizeCode(option('bnomei.redirects.code')),
             'querystring' => option('bnomei.redirects.querystring'),
-            'map' => $map,
+            'map' => option('bnomei.redirects.map', []),
             'site.url' => site()->url(), // a) www.example.com or b) www.example.com/subfolder
             'request.uri' => $this->getRequestURI(),
         ];
+        $this->options = array_merge($defaults, $options);
+
+        foreach ($this->options as $key => $call) {
+            if (is_callable($call)) {
+                $this->options[$key] = $call();
+            }
+        }
+
+        $this->checkForRedirect($this->options);
     }
 
     public function option(?string $key = null)
