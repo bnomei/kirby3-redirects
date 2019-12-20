@@ -55,7 +55,7 @@ sections:
 
 ## Site Methods
 
-The site methods `appendRedirect` and `removeRedirect` allow you to programmatically change the redirects table (if stored in a Page/Site-Object).
+The site methods `appendRedirects` and `removeRedirects` allow you to programmatically change the redirects table (if stored in a Page/Site-Object).
 
 ```php
 // add single item
