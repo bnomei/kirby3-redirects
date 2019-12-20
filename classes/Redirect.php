@@ -24,7 +24,7 @@ final class Redirect
     public function __construct(string $fromuri, string $touri, $code = 301)
     {
         $this->fromuri = $fromuri;
-        $this->touri = $this->url($touri);
+        $this->touri = $touri;
         $this->code = static::normalizeCode($code);
     }
 

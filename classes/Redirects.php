@@ -179,7 +179,7 @@ final class Redirects
 
         if ($check) {
             // @codeCoverageIgnoreStart
-            Header::redirect($check->to(), $check->code());
+            Header::redirect(Redirect::url($check->to()), $check->code());
             // @codeCoverageIgnoreEnd
         }
     }
