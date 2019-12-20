@@ -2,7 +2,7 @@
   "name": "bnomei/kirby3-redirects",
   "type": "kirby-plugin",
   "description": "Setup HTTP Status Code Redirects from within the Kirby Panel",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "license": "MIT",
   "authors": [
     {
@@ -43,6 +43,12 @@
     "dist": [
       "composer install --no-dev --optimize-autoloader",
       "git rm -rf --cached .; git add .;"
+    ],
+    "kirby": [
+      "composer install",
+      "composer update",
+      "composer install --working-dir=tests/kirby --no-dev --optimize-autoloader",
+      "composer update --working-dir=tests/kirby"
     ]
   },
   "require": {

@@ -29,6 +29,7 @@ class ComposerStaticInitb6cc1529004ec5e8322f3866ff7b344e
     );
 
     public static $classMap = array (
+        'Bnomei\\Redirect' => __DIR__ . '/../..' . '/classes/Redirect.php',
         'Bnomei\\Redirects' => __DIR__ . '/../..' . '/classes/Redirects.php',
         'Kirby\\ComposerInstaller\\CmsInstaller' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
         'Kirby\\ComposerInstaller\\Installer' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',

@@ -7,18 +7,25 @@ Kirby::plugin('bnomei/redirects', [
         'code' => 301,
         'querystring' => true,
         'map' => function () {
-            $redirects = kirby()->site()->redirects();
-            return $redirects->isEmpty() ? [] : $redirects->yaml();
-        }, // array or closure
+            return kirby()->site()->redirects();
+        }, // array, closure with structure-field or array
         'cache' => true,
     ],
     'blueprints' => [
         'plugin-redirects' => __DIR__ . '/blueprints/sections/redirects.yml',
-        'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml'
+        'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml',
     ],
     'hooks' => [
         'route:before' => function () {
-            \Bnomei\Redirects::redirects();
+            \Bnomei\Redirects::singleton()->redirect();
+        },
+    ],
+    'siteMethods' => [
+        'appendRedirects' => function ($data) {
+            return \Bnomei\Redirects::singleton()->append($data);
+        },
+        'removeRedirects' => function ($data) {
+            return \Bnomei\Redirects::singleton()->remove($data);
         },
     ],
     'routes' => [

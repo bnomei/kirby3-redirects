@@ -53,13 +53,43 @@ sections:
 
 > Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
 
+## Site Methods
+
+The site methods `appendRedirect` and `removeRedirect` allow you to programmatically change the redirects table (if stored in a Page/Site-Object).
+
+```php
+// add single item
+$success = site()->appendRedirects(
+    ['fromuri'=>'/posts?id=1', 'touri'=>'/blog/1', 'code'=>301]
+);
+
+// add multiple items with nested array
+$success = site()->appendRedirects([
+    ['fromuri'=>'/posts?id=2', 'touri'=>'/blog/2', 'code'=>301],
+    // ...
+    ['fromuri'=>'/posts?id=999', 'touri'=>'/blog/999', 'code'=>301],
+]);
+
+// remove single item
+$success = site()->removeRedirects(
+    ['fromuri'=>'/posts?id=1', 'touri'=>'/blog/1']
+);
+
+// remove multiple items with nested array
+$success = site()->removeRedirects([
+    ['fromuri'=>'/posts?id=3', 'touri'=>'/blog/3'],
+    ['fromuri'=>'/posts?id=5', 'touri'=>'/blog/5'],
+    ['fromuri'=>'/posts?id=7', 'touri'=>'/blog/7'],
+]);
+```
+
 ## Settings
 
 | bnomei.redirects.         | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
 | code | `301` | |
 | querystring | `true` | do keep querystring in request URI. example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12` |
-| map | `callback` | A closure to get the structure from `site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
+| map | `callback` | A closure to get the structure from `content/site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
 
 ## Disclaimer
 
