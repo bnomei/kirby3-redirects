@@ -4,6 +4,7 @@ type: fields
 fields:
   redirects:
     type: structure
+    translate: false
     fields:
       fromuri:
         label:
