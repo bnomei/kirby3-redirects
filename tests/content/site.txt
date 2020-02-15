@@ -1,26 +1,30 @@
 Redirects:
 
--
+- 
   fromuri: /building/ahmic
   touri: projects/ahmic/
-  #code: ""
--
+  code: ""
+- 
   fromuri: /building/ahmic
-  #touri: ""
+  touri: ""
   code: _301
--
+- 
+  fromuri: /building/ahmic/
+  touri: /projects/ahmic
+  code: _301
+- 
   fromuri: building/ahmic.html
   touri: /projects/ahmic
   code: _302
--
+- 
   fromuri: /projects?id=1
   touri: projects/ahmic/
   code: _303
--
+- 
   fromuri: /projects/relative
   touri: /relative-url
   code: _301
--
+- 
   fromuri: /projects/external
   touri: https://example.net/external-url
   code: _301

@@ -30,7 +30,11 @@ final class Redirect
 
     public function matches(string $url): bool
     {
-        return $this->from() === $url;
+        $from = rtrim($this->from(), '/');
+        return in_array($url, [
+            $from,
+            $from . '/', // issue #10
+        ]);
     }
 
     public function from(): string

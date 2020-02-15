@@ -42,6 +42,7 @@ class RedirectTest extends TestCase
     public function testMatches()
     {
         $this->assertTrue($this->exampleOK->matches('/old'));
+        $this->assertTrue($this->exampleOK->matches('/old/'));
 
         $this->assertFalse($this->exampleOK->matches('old'));
         $this->assertFalse($this->exampleOK->matches('/other'));
