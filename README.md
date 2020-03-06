@@ -1,14 +1,10 @@
 # Kirby 3 Redirects
 
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redirects?color=ae81ff)
-![Stars](https://flat.badgen.net/packagist/ghs/bnomei/kirby3-redirects?color=272822)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-redirects?color=272822)
-![Issues](https://flat.badgen.net/packagist/ghi/bnomei/kirby3-redirects?color=e6db74)
 [![Build Status](https://flat.badgen.net/travis/bnomei/kirby3-redirects)](https://travis-ci.com/bnomei/kirby3-redirects)
 [![Coverage Status](https://flat.badgen.net/coveralls/c/github/bnomei/kirby3-redirects)](https://coveralls.io/github/bnomei/kirby3-redirects) 
 [![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-redirects)](https://codeclimate.com/github/bnomei/kirby3-redirects) 
-[![Demo](https://flat.badgen.net/badge/website/examples?color=f92672)](https://kirby3-plugins.bnomei.com/autoid) 
-[![Gitter](https://flat.badgen.net/badge/gitter/chat?color=982ab3)](https://gitter.im/bnomei-kirby-3-plugins/community) 
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
 
