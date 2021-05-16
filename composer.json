@@ -56,8 +56,8 @@
     "getkirby/composer-installer": "^1.2"
   },
   "require-dev": {
-    "getkirby/cms": "^3.2",
-    "php-coveralls/php-coveralls": "^2.1",
+    "getkirby/cms": "^3.5",
+    "php-coveralls/php-coveralls": "^2.4",
     "phpunit/phpunit": "^9.5"
   },
   "extra": {
