@@ -93,7 +93,7 @@ final class Redirects
 
         $data = $this->option('redirects');
         $copy = $data;
-        foreach($change as $item) {
+        foreach ($change as $item) {
             foreach ($copy as $key => $redirect) {
                 if (A::get($redirect, 'fromuri') === A::get($item, 'fromuri') &&
                     A::get($redirect, 'touri') === A::get($item, 'touri')) {
@@ -120,8 +120,9 @@ final class Redirects
                         $map->key() => Yaml::encode($data),
                     ]);
                     return true;
-                // @codeCoverageIgnoreStart
-                } catch (\Exception $ex) { }
+                    // @codeCoverageIgnoreStart
+                } catch (\Exception $ex) {
+                }
                 // @codeCoverageIgnoreEnd
             }
         }

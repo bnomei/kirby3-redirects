@@ -16,7 +16,7 @@ class RedirectsTest extends TestCase
     public function testSingleton()
     {
         $redirects = Redirects::singleton();
-        $this->assertInstanceOf( Redirects::class, $redirects);
+        $this->assertInstanceOf(Redirects::class, $redirects);
     }
 
     public function testDoesNotRedirectOtherPage()
