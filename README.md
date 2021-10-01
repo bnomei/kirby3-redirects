@@ -20,7 +20,7 @@ Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.
 
 - [CSV Plugin](https://github.com/bnomei/kirby3-csv) to help you import and export data to the redirects structure.
 
-## Commerical Usage
+## Commercial Usage
 
 > <br>
 > <b>Support open source!</b><br><br>
