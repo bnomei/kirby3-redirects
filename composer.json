@@ -2,7 +2,7 @@
   "name": "bnomei/kirby3-redirects",
   "type": "kirby-plugin",
   "description": "Setup HTTP Status Code Redirects from within the Kirby Panel",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "license": "MIT",
   "authors": [
     {
@@ -30,7 +30,10 @@
   },
   "config": {
     "optimize-autoloader": true,
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "getkirby/composer-installer": true
+    }
   },
   "scripts": {
     "analyze": "phpstan analyse classes",
@@ -52,7 +55,7 @@
     ]
   },
   "require": {
-    "php": ">=7.3.0",
+    "php": ">=8.0",
     "getkirby/composer-installer": "^1.2"
   },
   "require-dev": {
