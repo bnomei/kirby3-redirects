@@ -3,7 +3,7 @@
   "type": "kirby-plugin",
   "description": "Setup HTTP Status Code Redirects from within the Kirby Panel",
   "homepage": "https://github.com/bnomei/kirby3-redirects",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "license": "MIT",
   "authors": [
     {
