@@ -17,15 +17,10 @@ Kirby::plugin('bnomei/redirects', [
     ],
     'hooks' => [
         'route:before' => function () {
-            $isPanel = strpos(
-                kirby()->request()->url()->toString(),
-                kirby()->urls()->panel()
-            ) !== false;
-            $isApi = strpos(
-                kirby()->request()->url()->toString(),
-                kirby()->urls()->api()
-            ) !== false;
-            if (!$isPanel && !$isApi) {
+            $isPanel = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->panel());
+            $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
+            $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
+            if (!$isPanel && !$isApi && !$isMedia) {
                 \Bnomei\Redirects::singleton()->redirect();
             }
         },
