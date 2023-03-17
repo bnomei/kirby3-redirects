@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bnomei;
 
+use Closure;
 use Kirby\Cms\Field;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
@@ -11,6 +12,7 @@ use Kirby\Data\Yaml;
 use Kirby\Http\Header;
 use Kirby\Http\Url;
 use Kirby\Toolkit\A;
+
 use function option;
 
 final class Redirects
@@ -218,5 +220,21 @@ final class Redirects
         kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60 * 24 * 7);
 
         return $codes;
+    }
+
+
+    public static array $cache = [];
+
+    public static function staticCache(string $key, Closure $closure)
+    {
+        if ($value = A::get(static::$cache, $key, null)) {
+            return $value;
+        }
+
+        if (!is_string($closure) && is_callable($closure)) {
+            static::$cache[$key] = $closure();
+        }
+
+        return static::$cache[$key];
     }
 }

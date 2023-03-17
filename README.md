@@ -52,7 +52,7 @@ sections:
     extends: plugin-redirects3xx
 ```
 
-> If you need all http codes you can use `extends: plugin-redirects` instead which calls the api to retrieve them (once for each redirect). This is not advised if you have a lot of redirects.
+> If you need all http codes you can use `extends: plugin-redirects` instead.
 
 > Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
 

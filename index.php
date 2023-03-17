@@ -12,7 +12,8 @@ Kirby::plugin('bnomei/redirects', [
         'cache' => true,
     ],
     'blueprints' => [
-        'plugin-redirects' => __DIR__ . '/blueprints/sections/redirects.yml',
+        // 'plugin-redirects' => __DIR__ . '/blueprints/sections/redirects.yml',
+        'plugin-redirects' => require_once __DIR__ . '/blueprints/sections/redirects.php',
         'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml',
     ],
     'hooks' => [
