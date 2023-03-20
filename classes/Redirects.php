@@ -182,7 +182,7 @@ final class Redirects
         if ($check) {
             // @codeCoverageIgnoreStart
             $code = $check->code();
-            if ($code > 300 && $code < 400) {
+            if ($code >= 300 && $code < 400) {
                 Header::redirect(Redirect::url($check->to()), $code);
             } else {
                 Header::status($code);
