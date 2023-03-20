@@ -29,7 +29,7 @@ final class Redirects
             'querystring' => option('bnomei.redirects.querystring'),
             'map' => option('bnomei.redirects.map'),
             'site.url' => site()->url(), // a) www.example.com or b) www.example.com/subfolder
-            'request.uri' => $this->getRequestURI(),
+            'request.uri' => A::get($options, 'requesturi', $this->getRequestURI()),
         ];
         $this->options = array_merge($defaults, $options);
 
@@ -40,7 +40,7 @@ final class Redirects
         }
         $this->options['redirects'] = $this->map($this->options['map']);
 
-        $this->checkForRedirect($this->options);
+        $this->checkForRedirect();
     }
 
     public function option(?string $key = null)
@@ -151,7 +151,6 @@ final class Redirects
                 A::get($redirect, 'touri', ''),
                 A::get($redirect, 'code', $this->option('code'))
             );
-
             if ($redirect->matches($requesturi)) {
                 return $redirect;
             }

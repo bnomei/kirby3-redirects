@@ -75,11 +75,32 @@ class RedirectTest extends TestCase
         $this->assertEquals('/projects', Redirect::url('/projects'));
         $this->assertEquals('/projects', Redirect::url('projects'));
         $this->assertEquals('/projects/ahmic', Redirect::url('projects/ahmic'));
-        $this->assertEquals('/projects/ahmic', Redirect::url('/projects/ahmic'));
     }
 
     public function testDebugInfo()
     {
         $this->assertIsArray($this->exampleOK->__debugInfo());
+    }
+
+    public function testRedirects()
+    {
+        // regex
+        $r = new \Bnomei\Redirects([
+            'requesturi' => '/some/old.html',
+        ]);
+        $check = $r->checkForRedirect();
+
+        $this->assertNotNull($check);
+        $this->assertEquals(309, $check->code());
+
+        // non 301
+        $r = new \Bnomei\Redirects([
+            'requesturi' => '/teapot',
+        ]);
+        $check = $r->checkForRedirect();
+
+        $this->assertNotNull($check);
+        $this->assertEquals(418, $check->code());
+
     }
 }

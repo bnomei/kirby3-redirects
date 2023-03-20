@@ -10,7 +10,7 @@
 
 Setup [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection)  Redirects from within the Kirby Panel.
 
-Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.html` and send Response-URIs like `https://exter.nal`. This makes it the ideal choice when porting a non Kirby project.
+Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.html`, `project\/.*\.html` and send Response-URIs like `https://exter.nal`. This makes it the ideal choice when porting a non Kirby project.
 
 ## Similar Plugin
 
@@ -85,6 +85,10 @@ $success = site()->removeRedirects([
     ['fromuri'=>'/posts?id=7', 'touri'=>'/blog/7'],
 ]);
 ```
+
+## Regex
+
+You can only use regex to match the request URI `fromuri`. The response URI `touri` will not be forwarded groups etc.
 
 ## Settings
 
