@@ -5,4 +5,4 @@ sections:
   pages:
     type: pages
   redirects:
-    extends: plugin-redirects3xx
+    extends: plugin-redirects

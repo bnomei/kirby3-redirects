@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Bnomei\Redirect;
+use Bnomei\Redirects;
 use PHPUnit\Framework\TestCase;
 
 class RedirectTest extends TestCase
@@ -82,20 +83,35 @@ class RedirectTest extends TestCase
         $this->assertIsArray($this->exampleOK->__debugInfo());
     }
 
-    public function testRedirects()
+    public function testRedirectsRegex()
     {
         // regex
-        $r = new \Bnomei\Redirects([
-            'requesturi' => '/some/old.html',
+        $r = new Redirects([
+            'request.uri' => '/some/old.html',
         ]);
         $check = $r->checkForRedirect();
 
         $this->assertNotNull($check);
-        $this->assertEquals(309, $check->code());
+        $this->assertEquals(304, $check->code());
+    }
 
+    public function testRedirectsRegexPlaceholders()
+    {
+        // regex placeholders
+        $r = new Redirects([
+            'request.uri' => '/blog/2022_some-sLug.html',
+        ]);
+        $check = $r->checkForRedirect();
+
+        $this->assertNotNull($check);
+        $this->assertEquals(303, $check->code());
+    }
+
+    public function testRedirectsNon301()
+    {
         // non 301
-        $r = new \Bnomei\Redirects([
-            'requesturi' => '/teapot',
+        $r = new Redirects([
+            'request.uri' => '/teapot',
         ]);
         $check = $r->checkForRedirect();
 

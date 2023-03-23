@@ -31,7 +31,7 @@ class RedirectsTest extends TestCase
         $this->assertEquals('http://homestead.test/', $redirects->option('site.url'));
         $this->assertNull($redirects->option('does not exist'));
 
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertNull($check);
     }
 
@@ -42,7 +42,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/building/ahmic',
         ];
         $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertTrue($check->code() === 301);
     }
 
@@ -64,7 +64,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects?id=1',
         ];
         $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertTrue($check->code() === 303);
     }
 
@@ -75,7 +75,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/projects/external',
         ];
         $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertTrue($check->code() === 301);
     }
 
@@ -101,17 +101,19 @@ class RedirectsTest extends TestCase
             'map' => null
         ];
         $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertNull($check);
     }
 
     public function testAppendRemove()
     {
-        $redirects = Redirects::singleton();
+        $redirects = new Redirects();
+
         $hash = md5((string) time());
-        $redirects->append(
+        $success = $redirects->append(
             ['fromuri'=>'/old1-'.$hash, 'touri'=>'/new1', 'code'=>302]
         );
+        $this->assertTrue($success);
         $success = $redirects->append([
             ['fromuri'=>'/old2-'.$hash, 'touri'=>'/new2', 'code'=>302],
             ['fromuri'=>'/old3-'.$hash, 'touri'=>'/new3']
@@ -121,9 +123,10 @@ class RedirectsTest extends TestCase
             __DIR__ . '/content/site.txt'
         ));
 
-        $redirects->remove(
+        $success = $redirects->remove(
             ['fromuri'=>'/old1-'.$hash, 'touri'=>'/new1']
         );
+        $this->assertTrue($success);
         $success = $redirects->remove([
             ['fromuri'=>'/old2-'.$hash, 'touri'=>'/new2'],
             ['fromuri'=>'/old3-'.$hash, 'touri'=>'/new3'],

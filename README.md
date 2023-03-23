@@ -62,19 +62,17 @@ In the structure field or using the provided site methods add Request-URIs `from
 - `projects?id=123`
 - `projects/cool.html`
 - `projects\/.*\.html`
+- `blog/(?P<year>\d{4})_(?P<slug>.*)\.html`
 
 and set Response-URIs `touri` like 
 
 - `projects/changed-slug`
 - `https://exter.nal`
+- `blog/$year/$slug`
 
 as well as a HTTP Status Code `code` like `301` or `302`.
 
 This makes it the ideal choice when porting a non Kirby project.
-
-## Regex
-
-You can only use regex to match the Request-URIs `fromuri`. The Response-URIs `touri` will not (yet) be forwarded groups etc.
 
 ## Site Methods
 

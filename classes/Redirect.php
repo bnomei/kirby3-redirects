@@ -42,7 +42,12 @@ final class Redirect
 
         // regex
         $pattern = '~^' . $from . '$~'; // regex delimiters
-        if (preg_match($pattern, $url) === 1) {
+        if (preg_match($pattern, $url, $matches) === 1) {
+            if (count($matches) > 1) {
+                foreach ($matches as $key => $value) {
+                    $this->touri = str_replace('$' . $key, $value, $this->touri);
+                }
+            }
             return true;
         }
 

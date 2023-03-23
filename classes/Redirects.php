@@ -40,9 +40,9 @@ final class Redirects
                 $this->options[$key] = $call();
             }
         }
-        $this->options['parent'] = is_array($this->options['map']) ? null : $this->options['map']->parent();
+        $this->options['parent'] = is_object($this->options['map']) ? $this->options['map']->parent() : null;
         $this->options['redirects'] = $this->map($this->options['map']);
-        $this->options['map'] = null; // free memory
+        //$this->options['map'] = null; // free memory
     }
 
     public function option(?string $key = null)
@@ -198,7 +198,7 @@ final class Redirects
     {
         $siteurl = A::get($this->options, 'site.url');
         $sitebase = Url::path($siteurl, true, true);
-        $url = str_replace($siteurl, '', $url);
+        $url = $siteurl !== '/' ? str_replace($siteurl, '', $url) : $url;
 
         return '/' . trim($sitebase . $url, '/');
     }
@@ -222,6 +222,7 @@ final class Redirects
                 Header::redirect(Redirect::url($check->to()), $code);
             } else {
                 Header::status($code);
+                die();
             }
 
             // @codeCoverageIgnoreEnd
