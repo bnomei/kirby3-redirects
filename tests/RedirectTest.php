@@ -101,6 +101,5 @@ class RedirectTest extends TestCase
 
         $this->assertNotNull($check);
         $this->assertEquals(418, $check->code());
-
     }
 }

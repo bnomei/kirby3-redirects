@@ -9,6 +9,8 @@ use Kirby\Cms\Field;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
 use Kirby\Data\Yaml;
+use Kirby\Filesystem\Dir;
+use Kirby\Filesystem\F;
 use Kirby\Http\Header;
 use Kirby\Http\Url;
 use Kirby\Toolkit\A;
@@ -38,9 +40,8 @@ final class Redirects
                 $this->options[$key] = $call();
             }
         }
+        $this->options['parent'] = is_array($this->options['map']) ? null : $this->options['map']->parent();
         $this->options['redirects'] = $this->map($this->options['map']);
-
-        $this->checkForRedirect();
     }
 
     public function option(?string $key = null)
@@ -121,6 +122,7 @@ final class Redirects
                     $page->update([
                         $map->key() => Yaml::encode($data),
                     ]);
+                    $this->flush();
                     return true;
                     // @codeCoverageIgnoreStart
                 } catch (\Exception $ex) {
@@ -131,6 +133,31 @@ final class Redirects
         return false;
     }
 
+    // getter function for parent value $option
+    public function getParent(): Page|Site|null
+    {
+        return $this->option('parent');
+    }
+
+    public function validRoutesDir(): string
+    {
+        $dir = kirby()->cache('bnomei.redirects')->root() . '/validroutes';
+        if (!Dir::exists($dir)) {
+            Dir::make($dir);
+        }
+        return $dir;
+    }
+
+    public function isKnownValidRoute(string $path): bool
+    {
+        return F::exists($this->validRoutesDir() . '/' . md5($path));
+    }
+
+    public function flush(): bool
+    {
+        return Dir::remove($this->validRoutesDir());
+    }
+
     public function checkForRedirect(): ?Redirect
     {
         $map = $this->option('redirects');
@@ -139,6 +166,10 @@ final class Redirects
         }
 
         $requesturi = (string) $this->option('request.uri');
+
+        if ($this->isKnownValidRoute($requesturi)) {
+            return null;
+        }
 
         foreach ($map as $redirect) {
             if (!array_key_exists('fromuri', $redirect) ||
@@ -155,6 +186,10 @@ final class Redirects
                 return $redirect;
             }
         }
+
+        // no redirect found, flag as valid route
+        F::write($this->validRoutesDir() . '/' . md5($requesturi), '');
+
         return null;
     }
 
@@ -207,13 +242,18 @@ final class Redirects
 
     public static function codes(bool $force = false): ?array
     {
-        $codes = null;
-        if (! $force && ! option('debug')) {
-            $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
-        }
-        if ($codes) {
-            return $codes;
-        }
+        // NOTE: do not use a cache in this method as it is
+        // called in the panel php blueprint and the cache
+        // is not available there yet. => NullCache issue
+
+        // $cache = kirby()->cache('bnomei.redirects');
+        // $codes = null;
+        // if (! $force && ! option('debug')) {
+        //     $codes = $cache->get('httpcodes');
+        // }
+        // if ($codes) {
+        //     return $codes;
+        // }
 
         $codes = [];
         foreach (Header::$codes as $code => $label) {
@@ -222,11 +262,10 @@ final class Redirects
                 'label' => $label,
             ];
         }
-        kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60 * 24 * 7);
+        // $cache->set('httpcodes', $codes, 60 * 24 * 7);
 
         return $codes;
     }
-
 
     public static array $cache = [];
 

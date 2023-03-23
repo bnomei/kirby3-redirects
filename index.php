@@ -25,6 +25,18 @@ Kirby::plugin('bnomei/redirects', [
                 \Bnomei\Redirects::singleton()->redirect();
             }
         },
+        'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
+            $redirects = \Bnomei\Redirects::singleton();
+            if ($redirects->getParent() && $redirects->getParent()->id() === $newPage->id()) {
+                $redirects->flush();
+            }
+        },
+        'site.update:after' => function (Kirby\Cms\Site $newSite, Kirby\Cms\Site $oldSite) {
+            $redirects = \Bnomei\Redirects::singleton();
+            if ($redirects->getParent() && $redirects->getParent()::class === $newSite::class) {
+                $redirects->flush();
+            }
+        },
     ],
     'siteMethods' => [
         'appendRedirects' => function ($data) {

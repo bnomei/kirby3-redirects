@@ -33,7 +33,7 @@ final class Redirect
         $from = rtrim($this->from(), '/');
 
         // plain string
-        if(in_array($url, [
+        if (in_array($url, [
             $from,
             $from . '/', // issue #10
         ])) {
