@@ -141,7 +141,6 @@ final class Redirects
 
     public function validRoutesDir(): string
     {
-        var_dump(kirby()->cache('bnomei.redirects')::class); die;
         $dir = kirby()->cache('bnomei.redirects')->root() . '/validroutes';
         if (!Dir::exists($dir)) {
             Dir::make($dir);
@@ -243,13 +242,18 @@ final class Redirects
 
     public static function codes(bool $force = false): ?array
     {
-        $codes = null;
-        if (! $force && ! option('debug')) {
-            $codes = kirby()->cache('bnomei.redirects')->get('httpcodes');
-        }
-        if ($codes) {
-            return $codes;
-        }
+        // NOTE: do not use a cache in this method as it is
+        // called in the panel php blueprint and the cache
+        // is not available there yet. => NullCache issue
+
+        // $cache = kirby()->cache('bnomei.redirects');
+        // $codes = null;
+        // if (! $force && ! option('debug')) {
+        //     $codes = $cache->get('httpcodes');
+        // }
+        // if ($codes) {
+        //     return $codes;
+        // }
 
         $codes = [];
         foreach (Header::$codes as $code => $label) {
@@ -258,7 +262,7 @@ final class Redirects
                 'label' => $label,
             ];
         }
-        kirby()->cache('bnomei.redirects')->set('httpcodes', $codes, 60 * 24 * 7);
+        // $cache->set('httpcodes', $codes, 60 * 24 * 7);
 
         return $codes;
     }
@@ -277,6 +281,4 @@ final class Redirects
 
         return static::$cache[$key];
     }
-
-
 }
