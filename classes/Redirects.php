@@ -31,7 +31,7 @@ final class Redirects
             'querystring' => option('bnomei.redirects.querystring'),
             'map' => option('bnomei.redirects.map'),
             'site.url' => site()->url(), // a) www.example.com or b) www.example.com/subfolder
-            'request.uri' => A::get($options, 'requesturi', $this->getRequestURI()),
+            'request.uri' => A::get($options, 'request.uri', $this->getRequestURI()),
         ];
         $this->options = array_merge($defaults, $options);
 
@@ -42,6 +42,7 @@ final class Redirects
         }
         $this->options['parent'] = is_array($this->options['map']) ? null : $this->options['map']->parent();
         $this->options['redirects'] = $this->map($this->options['map']);
+        $this->options['map'] = null; // free memory
     }
 
     public function option(?string $key = null)

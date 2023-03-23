@@ -53,7 +53,7 @@ class RedirectsTest extends TestCase
             'request.uri' => '/building/ahmic.html',
         ];
         $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect($redirects->option());
+        $check = $redirects->checkForRedirect();
         $this->assertTrue($check->code() === 302);
     }
 

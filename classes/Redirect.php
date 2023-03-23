@@ -41,7 +41,7 @@ final class Redirect
         }
 
         // regex
-        $pattern = '~' . $from . '~'; // regex delimiters
+        $pattern = '~^' . $from . '$~'; // regex delimiters
         if (preg_match($pattern, $url) === 1) {
             return true;
         }
