@@ -9,6 +9,8 @@ use Kirby\Cms\Field;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
 use Kirby\Data\Yaml;
+use Kirby\Filesystem\Dir;
+use Kirby\Filesystem\F;
 use Kirby\Http\Header;
 use Kirby\Http\Url;
 use Kirby\Toolkit\A;
@@ -38,9 +40,8 @@ final class Redirects
                 $this->options[$key] = $call();
             }
         }
+        $this->options['parent'] = is_array($this->options['map']) ? null : $this->options['map']->parent();
         $this->options['redirects'] = $this->map($this->options['map']);
-
-        $this->checkForRedirect();
     }
 
     public function option(?string $key = null)
@@ -121,6 +122,7 @@ final class Redirects
                     $page->update([
                         $map->key() => Yaml::encode($data),
                     ]);
+                    $this->flush();
                     return true;
                     // @codeCoverageIgnoreStart
                 } catch (\Exception $ex) {
@@ -131,6 +133,32 @@ final class Redirects
         return false;
     }
 
+    // getter function for parent value $option
+    public function getParent(): Page|Site|null
+    {
+        return $this->option('parent');
+    }
+
+    public function validRoutesDir(): string
+    {
+        var_dump(kirby()->cache('bnomei.redirects')::class); die;
+        $dir = kirby()->cache('bnomei.redirects')->root() . '/validroutes';
+        if (!Dir::exists($dir)) {
+            Dir::make($dir);
+        }
+        return $dir;
+    }
+
+    public function isKnownValidRoute(string $path): bool
+    {
+        return F::exists($this->validRoutesDir() . '/' . md5($path));
+    }
+
+    public function flush(): bool
+    {
+        return Dir::remove($this->validRoutesDir());
+    }
+
     public function checkForRedirect(): ?Redirect
     {
         $map = $this->option('redirects');
@@ -139,6 +167,10 @@ final class Redirects
         }
 
         $requesturi = (string) $this->option('request.uri');
+
+        if ($this->isKnownValidRoute($requesturi)) {
+            return null;
+        }
 
         foreach ($map as $redirect) {
             if (!array_key_exists('fromuri', $redirect) ||
@@ -155,6 +187,10 @@ final class Redirects
                 return $redirect;
             }
         }
+
+        // no redirect found, flag as valid route
+        F::write($this->validRoutesDir() . '/' . md5($requesturi), '');
+
         return null;
     }
 
@@ -227,7 +263,6 @@ final class Redirects
         return $codes;
     }
 
-
     public static array $cache = [];
 
     public static function staticCache(string $key, Closure $closure)
@@ -242,4 +277,6 @@ final class Redirects
 
         return static::$cache[$key];
     }
+
+
 }

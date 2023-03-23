@@ -8,9 +8,9 @@
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
 
-Setup [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection)  Redirects from within the Kirby Panel.
+Setup performant [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection) Redirects from within the Kirby Panel.
 
-Kirby 3 Redirects can handle Request-URIs like `projects?id=123`, `project/cool.html`, `project\/.*\.html` and send Response-URIs like `https://exter.nal`. This makes it the ideal choice when porting a non Kirby project.
+Kirby 3 Redirects can redirect any request URI to any response URI. It can also handle querystrings and regex.
 
 ## Similar Plugin
 
@@ -54,7 +54,27 @@ sections:
 
 > If you need all http codes you can use `extends: plugin-redirects` instead.
 
-> Since v1.1.0 the plugin will register itself with a `route:before`-hook and take care of the redirecting automatically. Many thanks to _Sebastian Aschenbach_ for suggesting this solution.
+## Usage
+
+In the structure field or using the provided site methods add Request-URIs `fromuri` like 
+
+- `projects/cool`
+- `projects?id=123`
+- `projects/cool.html`
+- `projects\/.*\.html`
+
+and set Response-URIs `touri` like 
+
+- `projects/changed-slug`
+- `https://exter.nal`
+
+as well as a HTTP Status Code `code` like `301` or `302`.
+
+This makes it the ideal choice when porting a non Kirby project.
+
+## Regex
+
+You can only use regex to match the Request-URIs `fromuri`. The Response-URIs `touri` will not (yet) be forwarded groups etc.
 
 ## Site Methods
 
@@ -85,10 +105,6 @@ $success = site()->removeRedirects([
     ['fromuri'=>'/posts?id=7', 'touri'=>'/blog/7'],
 ]);
 ```
-
-## Regex
-
-You can only use regex to match the request URI `fromuri`. The response URI `touri` will not be forwarded groups etc.
 
 ## Settings
 

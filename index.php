@@ -13,7 +13,7 @@ Kirby::plugin('bnomei/redirects', [
     ],
     'blueprints' => [
         // 'plugin-redirects' => __DIR__ . '/blueprints/sections/redirects.yml',
-        'plugin-redirects' => require_once __DIR__ . '/blueprints/sections/redirects.php',
+//        'plugin-redirects' => require_once __DIR__ . '/blueprints/sections/redirects.php',
         'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml',
     ],
     'hooks' => [
@@ -23,6 +23,18 @@ Kirby::plugin('bnomei/redirects', [
             $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
             if (!$isPanel && !$isApi && !$isMedia) {
                 \Bnomei\Redirects::singleton()->redirect();
+            }
+        },
+        'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
+            $redirects = \Bnomei\Redirects::singleton();
+            if ($newPage->is($redirects->getParent())) {
+                $redirects->flush();
+            }
+        },
+        'site.update:after' => function (Kirby\Cms\Site $newSite, Kirby\Cms\Site $oldSite) {
+            $redirects = \Bnomei\Redirects::singleton();
+            if ($newSite->is($redirects->getParent())) {
+                $redirects->flush();
             }
         },
     ],
