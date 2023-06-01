@@ -62,7 +62,7 @@ In the structure field or using the provided site methods add Request-URIs `from
 - `projects?id=123`
 - `projects/cool.html`
 - `projects\/.*\.html`
-- `blog/(?P<year>\d{4})_(?P<slug>.*)\.html`
+- `blog\/(?P<year>\d{4})_(?P<slug>.*)\.html`
 
 and set Response-URIs `touri` like 
 
