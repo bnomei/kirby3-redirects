@@ -88,11 +88,11 @@ final class Redirect
         $id = '/' . trim($url, '/');
         $page = page($id);
         if ($page) {
-            return $page->url();
+            return url($page->url());
         }
 
         if (V::url($url)) {
-            return $url;
+            return url($url);
         }
 
         return url($url);
