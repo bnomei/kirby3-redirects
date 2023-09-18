@@ -17,12 +17,14 @@ Kirby::plugin('bnomei/redirects', [
         'plugin-redirects3xx' => __DIR__ . '/blueprints/sections/redirects3xx.yml',
     ],
     'hooks' => [
-        'route:before' => function () {
-            $isPanel = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->panel());
-            $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
-            $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
-            if (!$isPanel && !$isApi && !$isMedia) {
-                \Bnomei\Redirects::singleton()->redirect();
+        'page.render:before' => function (string $contentType, array $data, Kirby\Cms\Page $page) {
+            if ($page->isErrorPage()) {
+                $isPanel = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->panel());
+                $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
+                $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
+                if (!$isPanel && !$isApi && !$isMedia) {
+                    \Bnomei\Redirects::singleton()->redirect();
+                }
             }
         },
         'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
