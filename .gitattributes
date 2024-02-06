@@ -2,3 +2,4 @@
 /.*                 export-ignore
 /phpunit.xml        export-ignore
 /*.lock             export-ignore
+/ray.php            export-ignore

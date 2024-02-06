@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Bnomei;
 
 use Closure;
-use Kirby\Cms\Field;
+use Exception;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
+use Kirby\Content\Field;
 use Kirby\Data\Yaml;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
@@ -40,6 +41,7 @@ final class Redirects
                 $this->options[$key] = $call();
             }
         }
+
         $this->options['parent'] = is_object($this->options['map']) ? $this->options['map']->parent() : null;
         $this->options['redirects'] = $this->map($this->options['map']);
         //$this->options['map'] = null; // free memory
@@ -126,7 +128,7 @@ final class Redirects
                     $this->flush();
                     return true;
                     // @codeCoverageIgnoreStart
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                 }
                 // @codeCoverageIgnoreEnd
             }

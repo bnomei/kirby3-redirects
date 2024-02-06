@@ -22,13 +22,13 @@ class RedirectsTest extends TestCase
     public function testDoesNotRedirectOtherPage()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/projects/ahmic',
         ];
         $redirects = new Redirects($options);
 
         $this->assertIsArray($redirects->option());
-        $this->assertEquals('http://homestead.test/', $redirects->option('site.url'));
+        $this->assertEquals('http://redirects.test/', $redirects->option('site.url'));
         $this->assertNull($redirects->option('does not exist'));
 
         $check = $redirects->checkForRedirect();
@@ -38,7 +38,7 @@ class RedirectsTest extends TestCase
     public function testRedirectPage()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/building/ahmic',
         ];
         $redirects = new Redirects($options);
@@ -49,7 +49,7 @@ class RedirectsTest extends TestCase
     public function testRedirectExtension()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/building/ahmic.html',
         ];
         $redirects = new Redirects($options);
@@ -60,7 +60,7 @@ class RedirectsTest extends TestCase
     public function testRedirectQuery()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/projects?id=1',
         ];
         $redirects = new Redirects($options);
@@ -71,7 +71,7 @@ class RedirectsTest extends TestCase
     public function testRedirectExternal()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/projects/external',
         ];
         $redirects = new Redirects($options);
@@ -96,7 +96,7 @@ class RedirectsTest extends TestCase
     public function testNoMap()
     {
         $options = [
-            'site.url' => 'http://homestead.test/',
+            'site.url' => 'http://redirects.test/',
             'request.uri' => '/projects/ahmic',
             'map' => null
         ];
@@ -111,12 +111,12 @@ class RedirectsTest extends TestCase
 
         $hash = md5((string) time());
         $success = $redirects->append(
-            ['fromuri'=>'/old1-'.$hash, 'touri'=>'/new1', 'code'=>302]
+            ['fromuri' => '/old1-'.$hash, 'touri' => '/new1', 'code' => 302]
         );
         $this->assertTrue($success);
         $success = $redirects->append([
-            ['fromuri'=>'/old2-'.$hash, 'touri'=>'/new2', 'code'=>302],
-            ['fromuri'=>'/old3-'.$hash, 'touri'=>'/new3']
+            ['fromuri' => '/old2-'.$hash, 'touri' => '/new2', 'code' => 302],
+            ['fromuri' => '/old3-'.$hash, 'touri' => '/new3']
         ]);
         $this->assertTrue($success);
         $this->assertStringContainsString($hash, file_get_contents(
@@ -124,12 +124,12 @@ class RedirectsTest extends TestCase
         ));
 
         $success = $redirects->remove(
-            ['fromuri'=>'/old1-'.$hash, 'touri'=>'/new1']
+            ['fromuri' => '/old1-'.$hash, 'touri' => '/new1']
         );
         $this->assertTrue($success);
         $success = $redirects->remove([
-            ['fromuri'=>'/old2-'.$hash, 'touri'=>'/new2'],
-            ['fromuri'=>'/old3-'.$hash, 'touri'=>'/new3'],
+            ['fromuri' => '/old2-'.$hash, 'touri' => '/new2'],
+            ['fromuri' => '/old3-'.$hash, 'touri' => '/new3'],
         ]);
         $this->assertTrue($success);
         $this->assertStringNotContainsString($hash, file_get_contents(
@@ -140,7 +140,7 @@ class RedirectsTest extends TestCase
         $redirects = new Redirects([
             'map' => []
         ]);
-        $success = $redirects->append([['fromuri'=>'/old-'.$hash, 'touri'=>'/new']]);
+        $success = $redirects->append([['fromuri' => '/old-'.$hash, 'touri' => '/new']]);
         $this->assertFalse($success);
     }
 }
