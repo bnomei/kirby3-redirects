@@ -55,6 +55,7 @@ final class Redirects
 
         $this->options['parent'] = is_object($this->options['map']) ? $this->options['map']->parent() : null;
 
+        $this->options['redirects'] = $this->map($this->options['map']);
         //$this->options['map'] = null; // free memory
     }
 
@@ -176,15 +177,15 @@ final class Redirects
     {
         $map = $this->option('redirects');
 
-        // add block.wordpress to map
+        // add block to map
         if ($this->options['block.enabled']) {
             $map = array_merge(
-                $this->map($this->options['block.wordpress']),
-                $this->map($this->options['block.joomla']),
-                $this->map($this->options['block.drupal']),
-                $this->map($this->options['block.magento']),
-                $this->map($this->options['block.shopify']),
-                $map
+                $this->options['block.wordpress'],
+                $this->options['block.joomla'],
+                $this->options['block.drupal'],
+                $this->options['block.magento'],
+                $this->options['block.shopify'],
+                $map ?? []
             );
         }
 
@@ -197,6 +198,7 @@ final class Redirects
         if ($this->isKnownValidRoute($requesturi)) {
             return null;
         }
+
 
         foreach ($map as $redirect) {
             if (!array_key_exists('fromuri', $redirect) ||
