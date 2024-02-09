@@ -9,6 +9,61 @@ Kirby::plugin('bnomei/redirects', [
         'map' => function () {
             return kirby()->site()->redirects();
         }, // array, closure with structure-field or array
+        'block' => [
+            'enabled' => true,
+            // catch most basic attacks early
+            'wordpress' => [
+                ['fromuri' => 'wp-login.php', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-admin', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'xmlrpc.php', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-content\/plugins\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-content\/themes\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-includes\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-config.php', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-admin/admin-ajax.php', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'wp-json\/wp\/v2\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'xmlrpc.php?action=pingback.ping', 'touri' => 'error', 'code' => 404],
+            ],
+            'joomla' => [
+                ['fromuri' => 'administrator/index.php', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'administrator\/components\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'components\/com_users\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'components\/com_content\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'components\/com_banners\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'administrator\/components\/com_joomlaupdate\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'administrator\/components\/com_admin\/.*', 'touri' => 'error', 'code' => 404],
+            ],
+            'drupal' => [
+                ['fromuri' => 'user/login', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'user/register', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin/config', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin/structure', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin/people', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin/modules', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'sites\/default\/files\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'sites/default/settings.php', 'touri' => 'error', 'code' => 404],
+            ],
+            'magento' => [
+                ['fromuri' => 'admin\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'downloader\/.*', 'touri' => 'error', 'code' => 404],
+                // ['fromuri' => 'api\/.*', 'touri' => 'error', 'code' => 404], // Kirby API
+                ['fromuri' => 'app/etc/local.xml', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'app/etc/config.xml', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'var/export\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'var/log\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'var/report\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'downloader\/Maged\/.*', 'touri' => 'error', 'code' => 404],
+            ],
+            'shopify' => [
+                ['fromuri' => 'admin/auth/login', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/settings\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/products\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/orders\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/themes\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/apps\/.*', 'touri' => 'error', 'code' => 404],
+                ['fromuri' => 'admin\/charges\/.*', 'touri' => 'error', 'code' => 404],
+            ],
+        ],
         'cache' => true,
     ],
     'blueprints' => [

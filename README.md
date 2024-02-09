@@ -104,13 +104,24 @@ $success = site()->removeRedirects([
 ]);
 ```
 
+## Protecting your Kirby from Bots
+
+This plugin will block various routes of other popular CMS. It is enabled by default and will reduce the load on your website caused by bots looking for vulnerabilities in other CMS.
+
+- Wordpress
+- Joomla
+- Drupal
+- Magento
+- Shopify
+
 ## Settings
 
-| bnomei.redirects.         | Default        | Description               |            
-|---------------------------|----------------|---------------------------|
-| code | `301` | |
-| querystring | `true` | do keep querystring in request URI. example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12` |
-| map | `callback` | A closure to get the structure from `content/site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
+| bnomei.redirects. | Default    | Description                                                                                                                                                           |            
+|-------------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| code              | `301`      |                                                                                                                                                                       |
+| querystring       | `true`     | do keep querystring in request URI. example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12`                                                   |
+| map               | `callback` | A closure to get the structure from `content/site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
+| block.enabled     | `true`     | Block various routes of other popular CMS                                                                                                                             |
 
 ## Disclaimer
 

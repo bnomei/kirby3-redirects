@@ -143,4 +143,26 @@ class RedirectsTest extends TestCase
         $success = $redirects->append([['fromuri' => '/old-'.$hash, 'touri' => '/new']]);
         $this->assertFalse($success);
     }
+
+    public function testWordpressBlock_A()
+    {
+        $options = [
+            'site.url' => 'http://redirects.test/',
+            'request.uri' => '/wp-content/themes/test/index.js',
+        ];
+        $redirects = new Redirects($options);
+        $check = $redirects->checkForRedirect();
+        $this->assertTrue($check->code() === 404);
+    }
+
+    public function testWordpressBlock_B()
+    {
+        $options = [
+            'site.url' => 'http://redirects.test/',
+            'request.uri' => '/xmlrpc.php?action=pingback.ping',
+        ];
+        $redirects = new Redirects($options);
+        $check = $redirects->checkForRedirect();
+        $this->assertTrue($check->code() === 404);
+    }
 }
