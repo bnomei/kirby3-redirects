@@ -24,7 +24,7 @@ Kirby::plugin('bnomei/redirects', [
                 ['fromuri' => 'id_rsa', 'touri' => '', 'code' => 404],
                 ['fromuri' => 'id_rsa.pub', 'touri' => '', 'code' => 404],
                 ['fromuri' => 'known_hosts', 'touri' => '', 'code' => 404],
-                ['fromuri' => '.ssh/', 'touri' => '', 'code' => 404],
+                ['fromuri' => '.ssh\/.*', 'touri' => '', 'code' => 404],
                 ['fromuri' => 'docker-compose.yml', 'touri' => '', 'code' => 404],
                 ['fromuri' => 'Dockerfile', 'touri' => '', 'code' => 404],
                 ['fromuri' => 'Procfile', 'touri' => '', 'code' => 404],
