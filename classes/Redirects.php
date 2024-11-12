@@ -39,7 +39,7 @@ final class Redirects
             'block.drupal' => option('bnomei.redirects.block.drupal'),
             'block.magento' => option('bnomei.redirects.block.magento'),
             'block.shopify' => option('bnomei.redirects.block.shopify'),
-            'site.url' => site()->url(), // a) www.example.com or b) www.example.com/subfolder
+            'site.url' => kirby()->url(), // a) www.example.com or b) www.example.com/subfolder
             'request.uri' => A::get($options, 'request.uri', $this->getRequestURI()),
         ];
         $this->options = array_merge($defaults, $options);
