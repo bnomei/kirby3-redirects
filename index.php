@@ -8,6 +8,7 @@ Kirby::plugin('bnomei/redirects', [
     'options' => [
         'code' => 301,
         'querystring' => true,
+        'only-empty-results' => false,
         'map' => function () {
             return kirby()->site()->redirects();
         }, // array, closure with structure-field or array
@@ -106,7 +107,11 @@ Kirby::plugin('bnomei/redirects', [
     ],
     'hooks' => [
         'route:after' => function (Route $route, string $path, string $method, $result, bool $final) {
-            if ($final === true && empty($result) === true) {
+            $allowed = true;
+            if (option('bnomei.redirects.only-empty-results')) {
+                $allowed = empty($result) === true;
+            }
+            if ($final === true && $allowed) {
                 $isPanel = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->panel());
                 $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
                 $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
