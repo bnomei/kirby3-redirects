@@ -1,4 +1,4 @@
-# Kirby 3 Redirects
+# Kirby Redirects
 
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redirects?color=ae81ff)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-redirects?color=272822)
@@ -10,7 +10,7 @@
 
 Setup performant [HTTP Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection) Redirects from within the Kirby Panel.
 
-Kirby 3 Redirects can redirect any request URI to any response URI. It can also handle querystrings and regex.
+Kirby Redirects can redirect any request URI to any response URI. It can also handle querystrings and regex.
 
 ## Similar Plugin
 
@@ -19,20 +19,6 @@ Kirby 3 Redirects can redirect any request URI to any response URI. It can also 
 ## Works well with
 
 - [CSV Plugin](https://github.com/bnomei/kirby3-csv) to help you import and export data to the redirects structure.
-
-## Commercial Usage
-
-> <br>
-> <b>Support open source!</b><br><br>
-> This plugin is free but if you use it in a commercial project please consider to sponsor me or make a donation.<br>
-> If my work helped you to make some cash it seems fair to me that I might get a little reward as well, right?<br><br>
-> Be kind. Share a little. Thanks.<br><br>
-> &dash; Bruno<br>
-> &nbsp; 
-
-| M | O | N | E | Y |
-|---|----|---|---|---|
-| [Github sponsor](https://github.com/sponsors/bnomei) | [Patreon](https://patreon.com/bnomei) | [Buy Me a Coffee](https://buymeacoff.ee/bnomei) | [Paypal dontation](https://www.paypal.me/bnomei/15) | [Hire me](mailto:b@bnomei.com?subject=Kirby) |
 
 ## Installation
 
