@@ -79,7 +79,7 @@ You can track any redirects, including the blocked requests from the *shield*, u
 This plugin will trigger the following hooks, which you could use to build your own tracking or logging.
 
 - `redirect:before($code, $redirect)`
-- `404:before(Route $route, string $path, string $method)`
+- `404:before($route, $path, $method)`
 
 **site/config/config.php**
 
