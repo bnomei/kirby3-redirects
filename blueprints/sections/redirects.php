@@ -33,12 +33,12 @@ return [
                         'codes',
                         fn () => array_map(
                             fn ($item) => [
-                                "text" => $item['code'] .': '. $item['label'],
-                                "value" => $item['code']
+                                'text' => $item['code'].': '.$item['label'],
+                                'value' => $item['code'],
                             ],
                             \Bnomei\Redirects::codes()
                         )
-                    )
+                    ),
                 ],
             ],
         ],

@@ -6,26 +6,19 @@ namespace Bnomei;
 
 use Kirby\Toolkit\V;
 
-final class Redirect
+class Redirect
 {
-    /**
-     * @var string
-     */
-    private $fromuri;
-    /**
-     * @var string
-     */
-    private $touri;
-    /**
-     * @var int
-     */
-    private $code;
+    private string $fromuri;
 
-    public function __construct(string $fromuri, string $touri, $code = 301)
+    private string $touri;
+
+    private int $code;
+
+    public function __construct(string $fromuri, string $touri, string|int|null $code = 301)
     {
         $this->fromuri = $fromuri;
         $this->touri = $touri;
-        $this->code = static::normalizeCode($code);
+        $this->code = self::normalizeCode($code);
     }
 
     public function matches(string $url): bool
@@ -35,19 +28,20 @@ final class Redirect
         // plain string
         if (in_array($url, [
             $from,
-            $from . '/', // issue #10
+            $from.'/', // issue #10
         ])) {
             return true;
         }
 
         // regex
-        $pattern = '~^' . $from . '$~'; // regex delimiters
+        $pattern = '~^'.$from.'$~'; // regex delimiters
         if (preg_match($pattern, $url, $matches) === 1) {
             if (count($matches) > 1) {
                 foreach ($matches as $key => $value) {
-                    $this->touri = str_replace('$' . $key, $value, $this->touri);
+                    $this->touri = str_replace('$'.$key, $value, $this->touri);
                 }
             }
+
             return true;
         }
 
@@ -74,31 +68,31 @@ final class Redirect
         return [
             'fromuri' => $this->from(),
             'touri' => $this->to(),
-            'code' => '_' . $this->code(),
+            'code' => '_'.$this->code(),
         ];
     }
 
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return $this->toArray();
     }
 
-    public static function url($url): string
+    public static function url(string $url): string
     {
-        $id = '/' . trim($url, '/');
+        $id = '/'.trim($url, '/');
         $page = page($id);
         if ($page) {
             return url($page->url());
         }
 
-        if (V::url($url)) {
+        if (V::url($url)) { // @phpstan-ignore-line
             return url($url);
         }
 
         return url($url);
     }
 
-    public static function normalizeCode($code): int
+    public static function normalizeCode(string|int|null $code): int
     {
         if (is_string($code)) {
             $code = intval(str_replace('_', '', $code));

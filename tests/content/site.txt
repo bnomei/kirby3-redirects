@@ -1,6 +1,222 @@
 Redirects:
 
 - 
+  fromuri: wp-login.php
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-admin
+  touri: ""
+  code: ""
+- 
+  fromuri: xmlrpc.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-content\/plugins\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-content\/themes\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-includes\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-config.php
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-admin/admin-ajax.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-json\/wp\/v2\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: xmlrpc.php?action=pingback.ping
+  touri: ""
+  code: ""
+- 
+  fromuri: administrator/index.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'administrator\/components\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_users\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_content\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_banners\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: user/login
+  touri: ""
+  code: ""
+- 
+  fromuri: user/register
+  touri: ""
+  code: ""
+- 
+  fromuri: 'admin\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'sites\/default\/files\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: sites/default/settings.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'downloader\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: app/etc/local.xml
+  touri: ""
+  code: ""
+- 
+  fromuri: app/etc/config.xml
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/export\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/log\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/report\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'downloader\/Maged\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-login.php
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-admin
+  touri: ""
+  code: ""
+- 
+  fromuri: xmlrpc.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-content\/plugins\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-content\/themes\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-includes\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-config.php
+  touri: ""
+  code: ""
+- 
+  fromuri: wp-admin/admin-ajax.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'wp-json\/wp\/v2\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: xmlrpc.php?action=pingback.ping
+  touri: ""
+  code: ""
+- 
+  fromuri: administrator/index.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'administrator\/components\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_users\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_content\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'components\/com_banners\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: user/login
+  touri: ""
+  code: ""
+- 
+  fromuri: user/register
+  touri: ""
+  code: ""
+- 
+  fromuri: 'admin\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'sites\/default\/files\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: sites/default/settings.php
+  touri: ""
+  code: ""
+- 
+  fromuri: 'downloader\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: app/etc/local.xml
+  touri: ""
+  code: ""
+- 
+  fromuri: app/etc/config.xml
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/export\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/log\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'var/report\/.*'
+  touri: ""
+  code: ""
+- 
+  fromuri: 'downloader\/Maged\/.*'
+  touri: ""
+  code: ""
+- 
   fromuri: /building/ahmic
   touri: projects/ahmic/
   code: _301

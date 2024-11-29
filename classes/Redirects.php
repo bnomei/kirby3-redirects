@@ -5,81 +5,103 @@ declare(strict_types=1);
 namespace Bnomei;
 
 use Closure;
-use Exception;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
 use Kirby\Content\Field;
 use Kirby\Data\Yaml;
-use Kirby\Filesystem\Dir;
-use Kirby\Filesystem\F;
 use Kirby\Http\Header;
 use Kirby\Http\Url;
 use Kirby\Toolkit\A;
 
-use Kirby\Toolkit\Str;
-
 use function option;
 
-final class Redirects
+class Redirects
 {
-    /*
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     public function __construct(array $options = [])
     {
-        $defaults = [
+        $this->options = array_merge([
             'code' => option('bnomei.redirects.code'),
             'querystring' => option('bnomei.redirects.querystring'),
             'map' => option('bnomei.redirects.map'),
-            'block.enabled' => option('bnomei.redirects.block.enabled'),
-            'block.wordpress' => option('bnomei.redirects.block.wordpress'),
-            'block.joomla' => option('bnomei.redirects.block.joomla'),
-            'block.drupal' => option('bnomei.redirects.block.drupal'),
-            'block.magento' => option('bnomei.redirects.block.magento'),
-            'block.shopify' => option('bnomei.redirects.block.shopify'),
-            'site.url' => kirby()->url(), // a) www.example.com or b) www.example.com/subfolder
-            'request.uri' => A::get($options, 'request.uri', $this->getRequestURI()),
-        ];
-        $this->options = array_merge($defaults, $options);
+            'parent' => null, // will be set by loadRedirectsFromSource
+            'shield.enabled' => option('bnomei.redirects.shield.enabled'),
+            'shield.wordpress' => option('bnomei.redirects.shield.wordpress'),
+            'shield.joomla' => option('bnomei.redirects.shield.joomla'),
+            'shield.drupal' => option('bnomei.redirects.shield.drupal'),
+            'shield.magento' => option('bnomei.redirects.shield.magento'),
+            'shield.shopify' => option('bnomei.redirects.shield.shopify'),
+            'site.url' => kirby()->url(), // a) www.example.com or b) www.example.com/subfolder, NOT site()->url() as that contains the language code
+            'request.uri' => strval(A::get($options, 'request.uri', $this->getRequestURI())),
+        ], $options);
 
         foreach ($this->options as $key => $call) {
-            if (is_callable($call) && in_array($key, ['code', 'querystring', 'map'])) {
+            if ($call instanceof Closure && in_array($key, ['code', 'querystring', 'map'])) {
                 $this->options[$key] = $call();
             }
         }
 
         // make sure the request.uri starts with a /
-        $this->options['request.uri'] = '/' . ltrim($this->options['request.uri'], '/');
+        $this->options['request.uri'] = '/'.ltrim($this->options['request.uri'], '/');
 
-        $this->options['parent'] = is_object($this->options['map']) ? $this->options['map']->parent() : null;
-
-        $this->options['redirects'] = $this->map($this->options['map']);
-        //$this->options['map'] = null; // free memory
+        $this->loadRedirectsFromSource($this->options['map']);
+        $this->addShieldToRedirects();
+        // keep map around to allow update/removes
+        //$this->options['map'] = null; // NOPE!
     }
 
-    public function option(?string $key = null)
+    public function option(?string $key = null): mixed
     {
         if ($key) {
             return A::get($this->options, $key);
         }
+
         return $this->options;
     }
 
-    public function map($redirects = null)
+    public function loadRedirectsFromSource(array|Field|null $source = null): array
     {
-        if (is_a($redirects, Field::class)) {
-            return $redirects->isNotEmpty() ? $redirects->yaml() : [];
+        $this->options['parent'] = null;
+
+        if ($source instanceof Field) {
+            $this->options['parent'] = $source->parent();
+            // https://getkirby.com/docs/reference/templates/field-methods/yaml
+            $source = $source->isNotEmpty() ? $source->yaml() : []; // @phpstan-ignore-line
         }
-        return is_array($redirects) ? $redirects : [];
+
+        $this->options['redirects'] = is_array($source) ? $source : [];
+
+        return $this->options['redirects'];
+    }
+
+    private function addShieldToRedirects(): bool
+    {
+        if ($this->options['shield.enabled'] !== true) {
+            return false;
+        }
+
+        $this->options['redirects'] = array_merge(
+            $this->options['shield.wordpress'],
+            $this->options['shield.joomla'],
+            $this->options['shield.drupal'],
+            $this->options['shield.magento'],
+            $this->options['shield.shopify'],
+            $this->options['redirects']
+        );
+
+        return true;
+    }
+
+    public function redirects(): array
+    {
+        return (array) $this->options['redirects'];
     }
 
     public function append(array $change): bool
     {
-        if (is_array($change) &&
-            count($change) === count($change, COUNT_RECURSIVE)
-        ) {
+        // wrap single change in array of changes
+        if (count($change) === count($change, COUNT_RECURSIVE)) {
             $change = [$change];
         }
 
@@ -90,26 +112,24 @@ final class Redirects
                 A::get($v, 'touri'),
                 A::get($v, 'code', $code)
             );
+
             return $redirect->toArray();
         }, $change);
 
-        $data = array_merge(
-            $this->option('redirects'),
-            $change
-        );
+        $data = array_merge($this->redirects(), $change);
         $this->options['redirects'] = $data;
+
         return $this->updateRedirects($data);
     }
 
     public function remove(array $change): bool
     {
-        if (is_array($change) &&
-            count($change) === count($change, COUNT_RECURSIVE)
-        ) {
+        // wrap single change in array of changes
+        if (count($change) === count($change, COUNT_RECURSIVE)) {
             $change = [$change];
         }
 
-        $data = $this->option('redirects');
+        $data = $this->redirects();
         $copy = $data;
         foreach ($change as $item) {
             foreach ($copy as $key => $redirect) {
@@ -121,88 +141,63 @@ final class Redirects
             }
         }
         $this->options['redirects'] = $data;
+
         return $this->updateRedirects($data);
     }
 
     public function updateRedirects(array $data): bool
     {
-        $map = $this->option('map');
-        if (is_a($map, Field::class)) {
-            $page = $map->parent();
-            if (is_a($page, Site::class) ||
-                is_a($page, Page::class)
-            ) {
-                try {
-                    kirby()->impersonate('kirby');
-                    $page->update([
-                        $map->key() => Yaml::encode($data),
-                    ]);
-                    $this->flush();
-                    return true;
-                    // @codeCoverageIgnoreStart
-                } catch (Exception $ex) {
-                }
-                // @codeCoverageIgnoreEnd
-            }
+        $parent = $this->getParent();
+        if (! $parent) {
+            return false;
         }
-        return false;
+
+        return (bool) kirby()->impersonate('kirby', function () use ($parent, $data) {
+            /** @var Field $map */
+            $map = $this->option('map');
+            $fieldKey = $map->key();
+            // @codeCoverageIgnoreStart
+            $parent->update([
+                $fieldKey => Yaml::encode($data),
+            ]);
+            // @codeCoverageIgnoreEnd
+
+            // static::flush(); // the hook will do this anyway
+            return true;
+        });
     }
 
     // getter function for parent value $option
     public function getParent(): Page|Site|null
     {
-        return $this->option('parent');
+        return $this->options['parent'];
     }
 
-    public function validRoutesDir(): string
+    public static function isKnownValidRoute(string $path): bool
     {
-        $dir = kirby()->cache('bnomei.redirects')->root() . '/validroutes';
-        if (!Dir::exists($dir)) {
-            Dir::make($dir);
-        }
-        return $dir;
+        return kirby()->cache('bnomei.redirects')->get(md5($path)) !== null;
     }
 
-    public function isKnownValidRoute(string $path): bool
+    public static function flush(): bool
     {
-        return F::exists($this->validRoutesDir() . '/' . md5($path));
-    }
-
-    public function flush(): bool
-    {
-        return Dir::remove($this->validRoutesDir());
+        return kirby()->cache('bnomei.redirects')->flush();
     }
 
     public function checkForRedirect(): ?Redirect
     {
-        $map = $this->option('redirects');
-
-        // add block to map
-        if ($this->options['block.enabled']) {
-            $map = array_merge(
-                $this->options['block.wordpress'],
-                $this->options['block.joomla'],
-                $this->options['block.drupal'],
-                $this->options['block.magento'],
-                $this->options['block.shopify'],
-                $map ?? []
-            );
-        }
-
-        if (! $map || count($map) === 0) {
+        $requesturi = (string) $this->options['request.uri'];
+        if (static::isKnownValidRoute($requesturi)) {
             return null;
         }
 
-        $requesturi = (string) $this->option('request.uri');
-
-        if ($this->isKnownValidRoute($requesturi)) {
+        $map = $this->redirects();
+        if (count($map) === 0) {
             return null;
         }
-
 
         foreach ($map as $redirect) {
-            if (!array_key_exists('fromuri', $redirect) ||
-                !array_key_exists('touri', $redirect)
+            if (! array_key_exists('fromuri', $redirect) ||
+                ! array_key_exists('touri', $redirect)
             ) {
                 continue;
             }
@@ -217,52 +212,57 @@ final class Redirects
         }
 
         // no redirect found, flag as valid route
-        F::write($this->validRoutesDir() . '/' . md5($requesturi), '');
+        // so it is not checked again until the cache is flushed
+        kirby()->cache('bnomei.redirects')->set(md5($requesturi), [
+            $requesturi,
+        ]);
 
         return null;
     }
 
-    private function makeRelativePath(string $url)
+    private function makeRelativePath(string $url): string
     {
         $siteurl = A::get($this->options, 'site.url');
         $sitebase = Url::path($siteurl, true, true);
         $url = $siteurl !== '/' ? str_replace($siteurl, '', $url) : $url;
 
-        return '/' . trim($sitebase . $url, '/');
+        return '/'.trim($sitebase.$url, '/');
     }
 
     private function getRequestURI(): string
     {
-        $uri = array_key_exists("REQUEST_URI", $_SERVER) ? $_SERVER["REQUEST_URI"] : '/' . kirby()->request()->path();
+        $uri = array_key_exists('REQUEST_URI', $_SERVER) ? strval($_SERVER['REQUEST_URI']) : kirby()->request()->path()->toString(leadingSlash: true);
         $uri = option('bnomei.redirects.querystring') ? $uri : strtok($uri, '?'); // / or /page or /subfolder or /subfolder/page
 
-        return $uri;
+        return $uri !== false ? $uri : '';
     }
 
-    public function redirect()
+    public function redirect(): void
     {
-        $check = $this->checkForRedirect();
-
-        if ($check) {
-            // @codeCoverageIgnoreStart
-            $code = $check->code();
-            if ($code >= 300 && $code < 400) {
-                Header::redirect(Redirect::url($check->to()), $code);
-            } else {
-                Header::status($code);
-                die();
-            }
-
-            // @codeCoverageIgnoreEnd
+        $redirect = $this->checkForRedirect();
+        if (! $redirect) {
+            return;
         }
+
+        $code = $redirect->code();
+        kirby()->trigger('redirect:before', ['code' => $code, 'redirect' => $redirect]);
+
+        // @codeCoverageIgnoreStart
+        if ($code >= 300 && $code < 400) {
+            Header::redirect(Redirect::url($redirect->to()), $code);
+        } else {
+            Header::status($code);
+            exit();
+        }
+        // @codeCoverageIgnoreEnd
     }
 
-    private static $singleton;
+    private static ?self $singleton = null;
 
-    public static function singleton($options = []): Redirects
+    public static function singleton(array $options = []): self
     {
         // @codeCoverageIgnoreStart
-        if (! self::$singleton) {
+        if (self::$singleton === null) {
             self::$singleton = new self($options);
         }
         // @codeCoverageIgnoreEnd
@@ -299,16 +299,14 @@ final class Redirects
 
     public static array $cache = [];
 
-    public static function staticCache(string $key, Closure $closure)
+    public static function staticCache(string $key, Closure $closure): mixed
     {
-        if ($value = A::get(static::$cache, $key, null)) {
+        if ($value = A::get(self::$cache, $key, null)) {
             return $value;
         }
 
-        if (!is_string($closure) && is_callable($closure)) {
-            static::$cache[$key] = $closure();
-        }
+        self::$cache[$key] = $closure();
 
-        return static::$cache[$key];
+        return self::$cache[$key];
     }
 }

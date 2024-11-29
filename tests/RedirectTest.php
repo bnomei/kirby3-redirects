@@ -1,121 +1,90 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use Bnomei\Redirect;
 use Bnomei\Redirects;
-use PHPUnit\Framework\TestCase;
 
-class RedirectTest extends TestCase
-{
-    private $exampleOK;
+beforeEach(function () {
+    $this->exampleOK = new Redirect('/old', '/', 302);
+});
+test('construct', function () {
+    expect($this->exampleOK)->toBeInstanceOf(Redirect::class);
+});
+test('from', function () {
+    expect($this->exampleOK->from())->toEqual('/old');
+});
+test('to', function () {
+    expect($this->exampleOK->to())->toEqual('/');
+});
+test('code', function () {
+    expect($this->exampleOK->code())->toEqual(302);
+});
+test('to array', function () {
+    expect($this->exampleOK->toArray())->toHaveCount(3);
+});
+test('matches', function () {
+    expect($this->exampleOK->matches('/old'))->toBeTrue();
+    expect($this->exampleOK->matches('/old/'))->toBeTrue();
 
-    public function setUp(): void
-    {
-        $this->exampleOK = new Redirect('/old', '/', 302);
-    }
+    expect($this->exampleOK->matches('old'))->toBeFalse();
+    expect($this->exampleOK->matches('/other'))->toBeFalse();
+});
+test('normalize code', function () {
+    expect(Redirect::normalizeCode(null))->toEqual(301);
+    expect(Redirect::normalizeCode(0))->toEqual(301);
+    expect(Redirect::normalizeCode('null'))->toEqual(301);
+    expect(Redirect::normalizeCode('false'))->toEqual(301);
+    expect(Redirect::normalizeCode(''))->toEqual(301);
+    expect(Redirect::normalizeCode(302))->toEqual(302);
+    expect(Redirect::normalizeCode('302'))->toEqual(302);
+    expect(Redirect::normalizeCode('_302'))->toEqual(302);
+});
+test('url', function () {
+    // url
+    expect(Redirect::url('https://example.net'))->toEqual('https://example.net');
 
-    public function test__construct()
-    {
-        $this->assertInstanceOf(Redirect::class, $this->exampleOK);
-    }
+    // path but not page
+    expect(Redirect::url('relative'))->toEqual('/relative');
 
-    public function testFrom()
-    {
-        $this->assertEquals('/old', $this->exampleOK->from());
-    }
+    // existing pages
+    expect(Redirect::url('/'))->toEqual('/');
+    expect(Redirect::url('home'))->toEqual('/');
+    expect(Redirect::url('/home'))->toEqual('/');
+    expect(Redirect::url('/projects'))->toEqual('/projects');
+    expect(Redirect::url('projects'))->toEqual('/projects');
+    expect(Redirect::url('projects/ahmic'))->toEqual('/projects/ahmic');
+});
+test('debug info', function () {
+    expect($this->exampleOK->__debugInfo())->toBeArray();
+});
+test('redirects regex', function () {
+    // regex
+    $r = new Redirects([
+        'request.uri' => '/some/old.html',
+    ]);
+    $check = $r->checkForRedirect();
 
-    public function testTo()
-    {
-        $this->assertEquals('/', $this->exampleOK->to());
-    }
+    expect($check)->not->toBeNull();
+    expect($check->code())->toEqual(304);
+});
+test('redirects regex placeholders', function () {
+    // regex placeholders
+    $r = new Redirects([
+        'request.uri' => '/blog/2022_some-sLug.html',
+    ]);
+    $check = $r->checkForRedirect();
 
-    public function testCode()
-    {
-        $this->assertEquals(302, $this->exampleOK->code());
-    }
+    expect($check)->not->toBeNull();
+    expect($check->code())->toEqual(303);
+});
+test('redirects non301', function () {
+    // non 301
+    $r = new Redirects([
+        'request.uri' => '/teapot',
+    ]);
+    $check = $r->checkForRedirect();
 
-    public function testToArray()
-    {
-        $this->assertCount(3, $this->exampleOK->toArray());
-    }
-
-    public function testMatches()
-    {
-        $this->assertTrue($this->exampleOK->matches('/old'));
-        $this->assertTrue($this->exampleOK->matches('/old/'));
-
-        $this->assertFalse($this->exampleOK->matches('old'));
-        $this->assertFalse($this->exampleOK->matches('/other'));
-    }
-
-    public function testNormalizeCode()
-    {
-        $this->assertEquals(301, Redirect::normalizeCode(null));
-        $this->assertEquals(301, Redirect::normalizeCode(0));
-        $this->assertEquals(301, Redirect::normalizeCode('null'));
-        $this->assertEquals(301, Redirect::normalizeCode('false'));
-        $this->assertEquals(301, Redirect::normalizeCode(''));
-        $this->assertEquals(302, Redirect::normalizeCode(302));
-        $this->assertEquals(302, Redirect::normalizeCode('302'));
-        $this->assertEquals(302, Redirect::normalizeCode('_302'));
-    }
-
-    public function testUrl()
-    {
-        // url
-        $this->assertEquals('https://example.net', Redirect::url('https://example.net'));
-
-        // path but not page
-        $this->assertEquals('/relative', Redirect::url('relative'));
-
-        // existing pages
-        $this->assertEquals('/', Redirect::url('/'));
-        $this->assertEquals('/', Redirect::url('home'));
-        $this->assertEquals('/', Redirect::url('/home'));
-        $this->assertEquals('/projects', Redirect::url('/projects'));
-        $this->assertEquals('/projects', Redirect::url('projects'));
-        $this->assertEquals('/projects/ahmic', Redirect::url('projects/ahmic'));
-    }
-
-    public function testDebugInfo()
-    {
-        $this->assertIsArray($this->exampleOK->__debugInfo());
-    }
-
-    public function testRedirectsRegex()
-    {
-        // regex
-        $r = new Redirects([
-            'request.uri' => '/some/old.html',
-        ]);
-        $check = $r->checkForRedirect();
-
-        $this->assertNotNull($check);
-        $this->assertEquals(304, $check->code());
-    }
-
-    public function testRedirectsRegexPlaceholders()
-    {
-        // regex placeholders
-        $r = new Redirects([
-            'request.uri' => '/blog/2022_some-sLug.html',
-        ]);
-        $check = $r->checkForRedirect();
-
-        $this->assertNotNull($check);
-        $this->assertEquals(303, $check->code());
-    }
-
-    public function testRedirectsNon301()
-    {
-        // non 301
-        $r = new Redirects([
-            'request.uri' => '/teapot',
-        ]);
-        $check = $r->checkForRedirect();
-
-        $this->assertNotNull($check);
-        $this->assertEquals(418, $check->code());
-    }
-}
+    expect($check)->not->toBeNull();
+    expect($check->code())->toEqual(418);
+});

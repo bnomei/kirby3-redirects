@@ -1,168 +1,139 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use Bnomei\Redirects;
-use PHPUnit\Framework\TestCase;
 
-class RedirectsTest extends TestCase
-{
-    public function testConstruct()
-    {
-        $redirects = new Redirects();
-        $this->assertInstanceOf(Redirects::class, $redirects);
-    }
+test('construct', function () {
+    $redirects = new Redirects;
+    expect($redirects)->toBeInstanceOf(Redirects::class);
+});
+test('singleton', function () {
+    $redirects = Redirects::singleton();
+    expect($redirects)->toBeInstanceOf(Redirects::class);
+});
+test('does not redirect other page', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/projects/ahmic',
+    ];
+    $redirects = new Redirects($options);
 
-    public function testSingleton()
-    {
-        $redirects = Redirects::singleton();
-        $this->assertInstanceOf(Redirects::class, $redirects);
-    }
+    expect($redirects->option())->toBeArray();
+    expect($redirects->option('site.url'))->toEqual('http://redirects.test/');
+    expect($redirects->option('does not exist'))->toBeNull();
 
-    public function testDoesNotRedirectOtherPage()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/projects/ahmic',
-        ];
-        $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check)->toBeNull();
+});
+test('redirect page', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/building/ahmic',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 301)->toBeTrue();
+});
+test('redirect extension', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/building/ahmic.html',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 302)->toBeTrue();
+});
+test('redirect query', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/projects?id=1',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 303)->toBeTrue();
+});
+test('redirect external', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/projects/external',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 301)->toBeTrue();
+});
+test('static codes', function () {
+    $codes = Redirects::codes();
+    expect($codes)->toBeArray();
+    expect($codes)->toHaveCount(25);
+});
+test('static codes forced', function () {
+    $codes = Redirects::codes(true);
+    expect($codes)->toBeArray();
+    expect($codes)->toHaveCount(25);
+});
+test('no map', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/projects/ahmic',
+        'map' => null,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check)->toBeNull();
+});
+test('append remove', function () {
+    $redirects = new Redirects;
 
-        $this->assertIsArray($redirects->option());
-        $this->assertEquals('http://redirects.test/', $redirects->option('site.url'));
-        $this->assertNull($redirects->option('does not exist'));
+    $hash = md5((string) time());
+    $success = $redirects->append(
+        ['fromuri' => '/old1-'.$hash, 'touri' => '/new1', 'code' => 302]
+    );
+    expect($success)->toBeTrue();
+    $success = $redirects->append([
+        ['fromuri' => '/old2-'.$hash, 'touri' => '/new2', 'code' => 302],
+        ['fromuri' => '/old3-'.$hash, 'touri' => '/new3'],
+    ]);
+    expect($success)->toBeTrue();
+    $this->assertStringContainsString($hash, file_get_contents(
+        __DIR__.'/content/site.txt'
+    ));
 
-        $check = $redirects->checkForRedirect();
-        $this->assertNull($check);
-    }
+    $success = $redirects->remove(
+        ['fromuri' => '/old1-'.$hash, 'touri' => '/new1']
+    );
+    expect($success)->toBeTrue();
+    $success = $redirects->remove([
+        ['fromuri' => '/old2-'.$hash, 'touri' => '/new2'],
+        ['fromuri' => '/old3-'.$hash, 'touri' => '/new3'],
+    ]);
+    expect($success)->toBeTrue();
+    $this->assertStringNotContainsString($hash, file_get_contents(
+        __DIR__.'/content/site.txt'
+    ));
 
-    public function testRedirectPage()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/building/ahmic',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 301);
-    }
-
-    public function testRedirectExtension()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/building/ahmic.html',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 302);
-    }
-
-    public function testRedirectQuery()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/projects?id=1',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 303);
-    }
-
-    public function testRedirectExternal()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/projects/external',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 301);
-    }
-
-    public function testStaticCodes()
-    {
-        $codes = Redirects::codes();
-        $this->assertIsArray($codes);
-        $this->assertCount(25, $codes);
-    }
-
-    public function testStaticCodesForced()
-    {
-        $codes = Redirects::codes(true);
-        $this->assertIsArray($codes);
-        $this->assertCount(25, $codes);
-    }
-
-    public function testNoMap()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/projects/ahmic',
-            'map' => null
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertNull($check);
-    }
-
-    public function testAppendRemove()
-    {
-        $redirects = new Redirects();
-
-        $hash = md5((string) time());
-        $success = $redirects->append(
-            ['fromuri' => '/old1-'.$hash, 'touri' => '/new1', 'code' => 302]
-        );
-        $this->assertTrue($success);
-        $success = $redirects->append([
-            ['fromuri' => '/old2-'.$hash, 'touri' => '/new2', 'code' => 302],
-            ['fromuri' => '/old3-'.$hash, 'touri' => '/new3']
-        ]);
-        $this->assertTrue($success);
-        $this->assertStringContainsString($hash, file_get_contents(
-            __DIR__ . '/content/site.txt'
-        ));
-
-        $success = $redirects->remove(
-            ['fromuri' => '/old1-'.$hash, 'touri' => '/new1']
-        );
-        $this->assertTrue($success);
-        $success = $redirects->remove([
-            ['fromuri' => '/old2-'.$hash, 'touri' => '/new2'],
-            ['fromuri' => '/old3-'.$hash, 'touri' => '/new3'],
-        ]);
-        $this->assertTrue($success);
-        $this->assertStringNotContainsString($hash, file_get_contents(
-            __DIR__ . '/content/site.txt'
-        ));
-
-        // can not update if is not a site/page
-        $redirects = new Redirects([
-            'map' => []
-        ]);
-        $success = $redirects->append([['fromuri' => '/old-'.$hash, 'touri' => '/new']]);
-        $this->assertFalse($success);
-    }
-
-    public function testWordpressBlock_A()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/wp-content/themes/test/index.js',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 404);
-    }
-
-    public function testWordpressBlock_B()
-    {
-        $options = [
-            'site.url' => 'http://redirects.test/',
-            'request.uri' => '/xmlrpc.php?action=pingback.ping',
-        ];
-        $redirects = new Redirects($options);
-        $check = $redirects->checkForRedirect();
-        $this->assertTrue($check->code() === 404);
-    }
-}
+    // can not update if is not a site/page
+    $redirects = new Redirects([
+        'map' => [],
+    ]);
+    $success = $redirects->append([['fromuri' => '/old-'.$hash, 'touri' => '/new']]);
+    expect($success)->toBeFalse();
+});
+test('wordpress block a', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/wp-content/themes/test/index.js',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 404)->toBeTrue();
+});
+test('wordpress block b', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/xmlrpc.php?action=pingback.ping',
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+    expect($check->code() === 404)->toBeTrue();
+});
