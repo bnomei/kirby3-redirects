@@ -49,8 +49,7 @@ sections:
 
 ## Usage
 
-In the Structure Field within the Panel add a Request-URIs `fromuri` like and set a Response-URIs `touri` like as well
-as a HTTP Status Code `code` like `301` or `302`.
+In the Structure Field within the Panel add a Request-URIs `fromuri`, set a Response-URIs `touri` and a HTTP Status Code `code` like `301` or `302`.
 
 | fromuri                                    | to                      | code  |
 |--------------------------------------------|-------------------------|-------|
