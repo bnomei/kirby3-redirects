@@ -21,7 +21,7 @@ class Redirect
         $this->code = self::normalizeCode($code);
     }
 
-    public function set(string $fromuri, string $touri, string|int|null $code = 301)
+    public function set(string $fromuri, string $touri, string|int|null $code = 301): self
     {
         $this->fromuri = $fromuri;
         $this->touri = $touri;
@@ -64,7 +64,7 @@ class Redirect
         if (preg_match($pattern, $url, $matches) === 1) {
             if (count($matches) > 1) {
                 foreach ($matches as $key => $value) {
-                    $this->touri = str_replace('$'.$key, $value, $this->touri);
+                    $this->touri = str_replace('$'.$key, $value, $this->touri ?? '');
                 }
             }
 

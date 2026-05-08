@@ -1,5 +1,6 @@
 <?php
 
+use Bnomei\Redirects;
 use Kirby\Content\Field;
 use Kirby\Http\Response;
 use Kirby\Http\Route;
@@ -11,6 +12,7 @@ Kirby::plugin('bnomei/redirects', [
         'code' => 301,
         'querystring' => true,
         'only-empty-results' => false,
+        'exact' => null, // associative array of strict request URI => response URI redirects
         'map' => function (): array|Closure|Field {
             return kirby()->site()->redirects(); // @phpstan-ignore-line
         }, // array, closure with structure-field or array
@@ -118,7 +120,7 @@ Kirby::plugin('bnomei/redirects', [
                 $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
                 $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
                 if (! $isPanel && ! $isApi && ! $isMedia) {
-                    \Bnomei\Redirects::singleton()->redirect();
+                    Redirects::singleton()->redirect();
                 }
             }
             if ($final && empty($result)) {
@@ -127,26 +129,26 @@ Kirby::plugin('bnomei/redirects', [
         },
         'site.*:after' => function ($event, $site) {
             if ($event->action() !== 'render') {
-                \Bnomei\Redirects::flush();
+                Redirects::flush();
             }
         },
         'page.*:after' => function ($event, $page) {
             if ($event->action() !== 'render') {
-                \Bnomei\Redirects::flush();
+                Redirects::flush();
             }
         },
         'file.*:after' => function ($event, $file) {
             if ($event->action() !== 'render') {
-                \Bnomei\Redirects::flush();
+                Redirects::flush();
             }
         },
     ],
     'siteMethods' => [
         'appendRedirects' => function (array $data) {
-            return \Bnomei\Redirects::singleton()->append($data);
+            return Redirects::singleton()->append($data);
         },
         'removeRedirects' => function (array $data) {
-            return \Bnomei\Redirects::singleton()->remove($data);
+            return Redirects::singleton()->remove($data);
         },
     ],
     'routes' => [
@@ -154,7 +156,7 @@ Kirby::plugin('bnomei/redirects', [
             'pattern' => 'plugin-redirects/codes',
             'method' => 'GET',
             'action' => function () {
-                return Response::json(['codes' => \Bnomei\Redirects::codes()]);
+                return Response::json(['codes' => Redirects::codes()]);
             },
         ],
     ],

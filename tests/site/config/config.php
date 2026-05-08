@@ -1,13 +1,15 @@
 <?php
 
+use Bnomei\Redirect;
 use Kirby\Filesystem\F;
+use Kirby\Http\Route;
 
 return [
     'debug' => true,
     'editor' => 'phpstorm',
 
     'hooks' => [
-        'redirect:before' => function (int $code, \Bnomei\Redirect $redirect) {
+        'redirect:before' => function (int $code, Redirect $redirect) {
             // do whatever you need, like...
             F::write(kirby()->root('logs').'/redirect.log', implode(' ', [
                 '['.date('Y-m-d H:i:s').']',
@@ -17,7 +19,7 @@ return [
                 PHP_EOL,
             ]), true);
         },
-        '404:before' => function (\Kirby\Http\Route $route, string $path, string $method) {
+        '404:before' => function (Route $route, string $path, string $method) {
             // do whatever you need, like...
             F::write(kirby()->root('logs').'/404.log', implode(' ', [
                 '['.date('Y-m-d H:i:s').']',

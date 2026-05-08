@@ -59,6 +59,30 @@ In the Structure Field within the Panel add a Request-URIs `fromuri`, set a Resp
 | `some/broken-link`                         | `https://exter.nal`     | `301` |
 | `blog\/(?P<year>\d{4})_(?P<slug>.*)\.html` | `blog/$year/$slug`      | `301` |
 
+## Exact redirects
+
+For generated redirect maps with many known `301` redirects, use `bnomei.redirects.exact`. It is checked before the
+Panel-managed `map` and only performs strict request URI lookups. Regex patterns and placeholders are intentionally not
+processed in this list.
+
+**site/config/config.php**
+
+```php
+return [
+    'bnomei.redirects.exact' => fn () => require kirby()->root('site').'/redirects/exact.php',
+];
+```
+
+**site/redirects/exact.php**
+
+```php
+<?php
+
+return [
+    '/old/path.htm' => '/new/path',
+];
+```
+
 ## Shielding your website from attacks
 
 This plugin will **block 50+ routes/patterns** of other popular CMS. It is enabled by default and will reduce the load
@@ -175,6 +199,8 @@ return [
 | code               | `301`      |                                                                                                                                                                        |
 | querystring        | `true`     | do keep querystring in request URI. example: `https://kirby3-plugins.bnomei.com/projects?id=12` => `projects?id=12`                                                    |
 | only-empty-results | `false`    | only redirect if the result is empty in the router                                                                                                                     |
+| exact             | `null`     | Strict request URI lookup map for generated redirects: `['/old' => '/new']`. Runs before `map` and does not process regex patterns.                                   |
+| exact.code        | `301`      | HTTP status code used for `exact` redirects.                                                                                                                           |
 | map                | `callback` | A closure to get the structure from `content/site.txt`. Define you own if you want the section to be in a different blueprint or skip the blueprint and just use code. |
 | shield.enabled     | `true`     | Block various routes of other popular CMS                                                                                                                              |
 

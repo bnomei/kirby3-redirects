@@ -1,5 +1,7 @@
 <?php
 
+use Bnomei\Redirects;
+
 return [
     'type' => 'fields',
     'fields' => [
@@ -29,14 +31,14 @@ return [
                     ],
                     'default' => '301',
                     'type' => 'select',
-                    'options' => \Bnomei\Redirects::staticCache(
+                    'options' => Redirects::staticCache(
                         'codes',
                         fn () => array_map(
                             fn ($item) => [
                                 'text' => $item['code'].': '.$item['label'],
                                 'value' => $item['code'],
                             ],
-                            \Bnomei\Redirects::codes()
+                            Redirects::codes()
                         )
                     ),
                 ],

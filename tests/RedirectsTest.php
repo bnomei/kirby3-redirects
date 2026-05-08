@@ -82,6 +82,72 @@ test('no map', function () {
     $check = $redirects->checkForRedirect();
     expect($check)->toBeNull();
 });
+test('exact redirect', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/exact.htm',
+        'exact' => [
+            '/legacy/exact.htm' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->code())->toEqual(301);
+    expect($check->from())->toEqual('/legacy/exact.htm');
+    expect($check->to())->toEqual('/projects/ahmic');
+});
+test('exact redirect code', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/exact-code.htm',
+        'exact' => [
+            '/legacy/exact-code.htm' => '/projects/ahmic',
+        ],
+        'exact.code' => 308,
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->code())->toEqual(308);
+});
+test('exact redirect source closure', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/exact-closure.htm',
+        'exact' => fn () => [
+            '/legacy/exact-closure.htm' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->to())->toEqual('/projects/ahmic');
+});
+test('exact redirects do not use regex matching', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/regex-test.htm',
+        'exact' => [
+            '/legacy/.*' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->toBeNull();
+});
 test('wordpress block a', function () {
     $options = [
         'site.url' => 'http://redirects.test/',

@@ -24,6 +24,8 @@ class Redirects
         $this->options = array_merge([
             'code' => option('bnomei.redirects.code'),
             'querystring' => option('bnomei.redirects.querystring'),
+            'exact' => option('bnomei.redirects.exact'),
+            'exact.code' => option('bnomei.redirects.exact.code') ?? option('bnomei.redirects.code'),
             'map' => option('bnomei.redirects.map'),
             'parent' => null, // will be set by loadRedirectsFromSource
             'shield.enabled' => option('bnomei.redirects.shield.enabled'),
@@ -38,7 +40,7 @@ class Redirects
         ], $options);
 
         foreach ($this->options as $key => $call) {
-            if ($call instanceof Closure && in_array($key, ['code', 'querystring', 'map'])) {
+            if ($call instanceof Closure && in_array($key, ['code', 'querystring', 'exact', 'exact.code', 'map'])) {
                 $this->options[$key] = $call();
             }
         }
@@ -46,6 +48,7 @@ class Redirects
         // make sure the request.uri starts with a /
         $this->options['request.uri'] = '/'.ltrim($this->options['request.uri'], '/');
 
+        $this->loadExactRedirectsFromSource($this->options['exact']);
         $this->loadRedirectsFromSource($this->options['map']);
         $this->addShieldToRedirects();
         $this->buildLookup();
@@ -60,6 +63,32 @@ class Redirects
         }
 
         return $this->options;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function loadExactRedirectsFromSource(array|Field|null $source = null): array
+    {
+        if ($source instanceof Field) {
+            // https://getkirby.com/docs/reference/templates/field-methods/yaml
+            $source = $source->isNotEmpty() ? $source->yaml() : []; // @phpstan-ignore-line
+        }
+
+        $exact = [];
+        if (is_array($source)) {
+            foreach ($source as $fromuri => $touri) {
+                if (! is_string($fromuri) || trim($fromuri) === '' || ! is_string($touri) || trim($touri) === '') {
+                    continue;
+                }
+
+                $exact[$this->makeRelativePath($fromuri)] = trim($touri);
+            }
+        }
+
+        $this->options['exact'] = $exact;
+
+        return $exact;
     }
 
     public function loadRedirectsFromSource(array|Field|null $source = null): array
@@ -109,6 +138,20 @@ class Redirects
     public function redirects(): array
     {
         return (array) $this->options['redirects'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function exactRedirects(): array
+    {
+        $exact = $this->options['exact'];
+        if (! is_array($exact)) {
+            return [];
+        }
+
+        /** @var array<string, string> $exact */
+        return $exact;
     }
 
     public function append(array $change): bool
@@ -180,6 +223,10 @@ class Redirects
             $parent = kirby()->page($parent->id());
         }
 
+        if (! $parent) {
+            return false;
+        }
+
         return (bool) kirby()->impersonate('kirby', function () use ($parent, $data) {
             /** @var Field $map */
             $map = $this->option('map');
@@ -218,6 +265,10 @@ class Redirects
             return null;
         }
 
+        if ($redirect = $this->checkForExactRedirect($requesturi)) {
+            return $redirect;
+        }
+
         $map = $this->redirects();
         if (count($map) === 0) {
             return null;
@@ -253,6 +304,21 @@ class Redirects
         ]);
 
         return null;
+    }
+
+    private function checkForExactRedirect(string $requesturi): ?Redirect
+    {
+        $exact = $this->exactRedirects();
+        if (! array_key_exists($requesturi, $exact)) {
+            return null;
+        }
+
+        $code = $this->option('exact.code');
+        if (! is_string($code) && ! is_int($code) && $code !== null) {
+            $code = $this->option('code');
+        }
+
+        return new Redirect($requesturi, $exact[$requesturi], is_string($code) || is_int($code) ? $code : null);
     }
 
     private function makeRelativePath(string $url): string
