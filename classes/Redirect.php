@@ -45,6 +45,10 @@ class Redirect
         $mightBeRegex = false;
         if (str_contains($from, '.*') ||
             str_contains($from, '.+') ||
+            str_contains($from, '\\') ||
+            str_contains($from, '[') ||
+            str_contains($from, '+') ||
+            str_contains($from, '/?') ||
             str_contains($from, '*') ||
             str_contains($from, '(') ||
             str_contains($from, '|') ||
