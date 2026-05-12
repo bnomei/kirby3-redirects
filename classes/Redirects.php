@@ -111,7 +111,7 @@ class Redirects
         if ($this->options['shield.enabled'] !== true) {
             return $this->options['redirects'];
         }
-        // array_merge is not working properly here, so we do it manually
+        $redirects = [];
         foreach ([
             'shield.generic',
             'shield.wordpress',
@@ -120,19 +120,33 @@ class Redirects
             'shield.magento',
             'shield.shopify',
         ] as $shield) {
-            foreach ($this->options[$shield] as $redirect) {
-                $this->options['redirects'][] = $redirect;
+            foreach ((array) $this->options[$shield] as $redirect) {
+                $redirects[] = $redirect;
             }
         }
+
+        $this->options['redirects'] = array_merge($redirects, $this->options['redirects']);
 
         return $this->options['redirects'];
     }
 
     private function buildLookup(): array
     {
-        $this->options['redirects'] = array_column($this->options['redirects'], null, 'fromuri');
+        $this->options['lookup'] = [];
+        foreach ($this->redirects() as $redirect) {
+            if (! is_array($redirect) || ! array_key_exists('fromuri', $redirect)) {
+                continue;
+            }
 
-        return $this->options['redirects'];
+            $fromuri = A::get($redirect, 'fromuri');
+            if (! is_string($fromuri) || trim($fromuri) === '') {
+                continue;
+            }
+
+            $this->options['lookup'][$this->makeRelativePath($fromuri)][] = $redirect;
+        }
+
+        return $this->options['lookup'];
     }
 
     public function redirects(): array
@@ -261,12 +275,12 @@ class Redirects
     public function checkForRedirect(?string $uri = null): ?Redirect
     {
         $requesturi = $uri ?? (string) $this->options['request.uri'];
-        if (static::isKnownValidRoute($requesturi)) {
-            return null;
-        }
-
         if ($redirect = $this->checkForExactRedirect($requesturi)) {
             return $redirect;
+        }
+
+        if (static::isKnownValidRoute($requesturi)) {
+            return null;
         }
 
         $map = $this->redirects();
@@ -276,8 +290,8 @@ class Redirects
 
         $r = new Redirect;
         // try direct lookup first and only do that in a match
-        if (array_key_exists($requesturi, $map)) {
-            $map = [$map[$requesturi]];
+        if (array_key_exists($requesturi, $this->options['lookup'])) {
+            $map = $this->options['lookup'][$requesturi];
         }
         foreach ($map as $redirect) {
             if (! array_key_exists('fromuri', $redirect) ||
