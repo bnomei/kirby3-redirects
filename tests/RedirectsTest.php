@@ -34,6 +34,24 @@ test('redirect page', function () {
     $redirects = new Redirects($options);
     $check = $redirects->checkForRedirect();
     expect($check->code() === 301)->toBeTrue();
+    expect($check->to())->toEqual('projects/ahmic/');
+});
+test('duplicate redirects keep first match', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/same',
+        'map' => [
+            ['fromuri' => '/same', 'touri' => '/first', 'code' => 301],
+            ['fromuri' => '/same', 'touri' => '/second', 'code' => 302],
+        ],
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->to())->toEqual('/first');
+    expect($check->code())->toEqual(301);
 });
 test('redirect extension', function () {
     $options = [
@@ -148,6 +166,27 @@ test('exact redirects do not use regex matching', function () {
 
     expect($check)->toBeNull();
 });
+test('exact redirect wins over known valid route cache', function () {
+    Redirects::flush();
+    kirby()->cache('bnomei.redirects')->set(md5('/legacy/cached-exact.htm'), [
+        '/legacy/cached-exact.htm',
+    ]);
+
+    $redirects = new Redirects([
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/cached-exact.htm',
+        'exact' => [
+            '/legacy/cached-exact.htm' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ]);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->to())->toEqual('/projects/ahmic');
+    Redirects::flush();
+});
 test('wordpress block a', function () {
     $options = [
         'site.url' => 'http://redirects.test/',
@@ -165,6 +204,20 @@ test('wordpress block b', function () {
     $redirects = new Redirects($options);
     $check = $redirects->checkForRedirect();
     expect($check->code() === 404)->toBeTrue();
+});
+test('shield redirects keep priority over user redirects', function () {
+    $redirects = new Redirects([
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/wp-login.php',
+        'map' => [
+            ['fromuri' => '/wp-login.php', 'touri' => '/login', 'code' => 301],
+        ],
+    ]);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->code())->toEqual(404);
+    expect($check->to())->toEqual('');
 });
 test('append remove', function () {
     $redirects = new Redirects;
