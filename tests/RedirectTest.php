@@ -30,6 +30,13 @@ test('matches', function () {
     expect($this->exampleOK->matches('old'))->toBeFalse();
     expect($this->exampleOK->matches('/other'))->toBeFalse();
 });
+test('matches common regex syntax', function () {
+    expect((new Redirect('/post/\d+', '/posts'))->matches('/post/123'))->toBeTrue();
+    expect((new Redirect('/file\.html', '/file'))->matches('/file.html'))->toBeTrue();
+    expect((new Redirect('/foo[0-9]+', '/foo'))->matches('/foo42'))->toBeTrue();
+    expect((new Redirect('/feed/?', '/feed'))->matches('/feed'))->toBeTrue();
+    expect((new Redirect('/feed/?', '/feed'))->matches('/feed/'))->toBeTrue();
+});
 test('normalize code', function () {
     expect(Redirect::normalizeCode(null))->toEqual(301);
     expect(Redirect::normalizeCode(0))->toEqual(301);
