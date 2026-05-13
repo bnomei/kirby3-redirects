@@ -163,29 +163,10 @@ $success = site()->removeRedirects([
 ]);
 ```
 
-## Cache & Performance
+## Performance
 
-The plugin will cache any valid URI request and thus vastly improve performance on repeated requests to that URI. Thus
-the plugin will not check for redirects at all if it know that the URI will lead to a valid content page in Kirby. When
-the redirects table is changed or any content is updated via the Panel the cache will be cleared.
-
-For best performance, set either
-the [global or plugin-specific cache driver](https://getkirby.com/docs/reference/system/options/cache) to one using the
-server's memory, not the default using files on the hard disk (even on SSDs). If available, I suggest Redis/APCu or
-leave it at `file` otherwise.
-
-**site/config/config.php**
-
-```php
-return [
-  'cache' => [
-    'driver' => 'apcu', // or redis
-  ],
-  'bnomei.redirects.cache' => [
-    'type' => 'apcu', // or redis
-  ],
-];
-```
+Redirects are checked against exact redirect entries first and then against the configured redirect map. Unmatched public
+requests are not written to the cache.
 
 ## Similar Plugins
 

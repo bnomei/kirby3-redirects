@@ -166,7 +166,7 @@ test('exact redirects do not use regex matching', function () {
 
     expect($check)->toBeNull();
 });
-test('exact redirect wins over known valid route cache', function () {
+test('exact redirect ignores stale redirect cache entries', function () {
     Redirects::flush();
     kirby()->cache('bnomei.redirects')->set(md5('/legacy/cached-exact.htm'), [
         '/legacy/cached-exact.htm',
@@ -185,6 +185,23 @@ test('exact redirect wins over known valid route cache', function () {
 
     expect($check)->not()->toBeNull();
     expect($check->to())->toEqual('/projects/ahmic');
+    Redirects::flush();
+});
+test('unmatched requests are not written to the redirect cache', function () {
+    Redirects::flush();
+
+    $uri = '/random-public-miss?redirect-miss=one';
+    $redirects = new Redirects([
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => $uri,
+        'map' => null,
+    ]);
+
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->toBeNull();
+    expect(kirby()->cache('bnomei.redirects')->get(md5($uri)))->toBeNull();
+
     Redirects::flush();
 });
 test('wordpress block a', function () {

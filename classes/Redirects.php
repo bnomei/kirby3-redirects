@@ -279,10 +279,6 @@ class Redirects
             return $redirect;
         }
 
-        if (static::isKnownValidRoute($requesturi)) {
-            return null;
-        }
-
         $map = $this->redirects();
         if (count($map) === 0) {
             return null;
@@ -310,12 +306,6 @@ class Redirects
                 return $r;
             }
         }
-
-        // no redirect found, flag as valid route
-        // so it is not checked again until the cache is flushed
-        kirby()->cache('bnomei.redirects')->set(md5($requesturi), [
-            $requesturi,
-        ]);
 
         return null;
     }
