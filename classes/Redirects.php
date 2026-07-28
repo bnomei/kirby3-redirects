@@ -45,8 +45,11 @@ class Redirects
             }
         }
 
-        // make sure the request.uri starts with a /
-        $this->options['request.uri'] = '/'.ltrim($this->options['request.uri'], '/');
+        // make sure the request.uri starts with a / and has no trailing slash,
+        // matching the normalization makeRelativePath() applies to redirect keys
+        // (otherwise sites with the `canonical.trailingSlash` convention never
+        // match an exact redirect, since every request ends in a slash)
+        $this->options['request.uri'] = '/'.trim($this->options['request.uri'], '/');
 
         $this->loadExactRedirectsFromSource($this->options['exact']);
         $this->loadRedirectsFromSource($this->options['map']);
