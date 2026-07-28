@@ -118,6 +118,38 @@ test('exact redirect', function () {
     expect($check->from())->toEqual('/legacy/exact.htm');
     expect($check->to())->toEqual('/projects/ahmic');
 });
+test('exact redirect matches request uri with a trailing slash', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/exact-slash.htm/',
+        'exact' => [
+            '/legacy/exact-slash.htm' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->to())->toEqual('/projects/ahmic');
+});
+test('exact redirect defined with a trailing slash matches request uri without one', function () {
+    $options = [
+        'site.url' => 'http://redirects.test/',
+        'request.uri' => '/legacy/exact-slash-source.htm',
+        'exact' => [
+            '/legacy/exact-slash-source.htm/' => '/projects/ahmic',
+        ],
+        'map' => null,
+        'shield.enabled' => false,
+    ];
+    $redirects = new Redirects($options);
+    $check = $redirects->checkForRedirect();
+
+    expect($check)->not()->toBeNull();
+    expect($check->to())->toEqual('/projects/ahmic');
+});
 test('exact redirect code', function () {
     $options = [
         'site.url' => 'http://redirects.test/',
