@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".github/workflows/pest-tests.yml"
       - "**.php"
       - "blueprints/**"
       - "tests/panel/check"
       - "composer.lock"
   pull_request:
     paths:
+      - ".github/workflows/pest-tests.yml"
       - "**.php"
       - "blueprints/**"
       - "tests/panel/check"
@@ -45,10 +47,14 @@ jobs:
           agent-browser install --with-deps
           tests/panel/check
 
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v8.0.0
-        with:
-          coverageCommand: tests/vendor/bin/pest --ci
-          coverageLocations: ${{github.workspace}}/tests/clover.xml:clover
+      - name: Run Pest with coverage
+        run: tests/vendor/bin/pest --ci --coverage-clover tests/clover.xml
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          XDEBUG_MODE: coverage
+
+      - name: Save coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: tests/clover.xml
+          if-no-files-found: error
