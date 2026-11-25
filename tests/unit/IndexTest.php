@@ -17,9 +17,3 @@ test('finds test page', function () {
     expect($response->code() === 200)->toBeTrue();
     $this->assertStringContainsString('Ahmic', $response->body());
 });
-
-test('finds redirects to a page', function () {
-    $response = kirby()->render('/building/ahmic');
-    expect($response->code() === 301)->toBeTrue();
-    $this->assertStringContainsString('Ahmic', $response->body());
-})->skip('render does not route');

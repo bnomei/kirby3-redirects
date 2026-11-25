@@ -115,7 +115,7 @@ class Redirect
             return url($page->url());
         }
 
-        if (V::url($url)) { // @phpstan-ignore-line
+        if (V::url($url)) {
             return url($url);
         }
 

@@ -6,8 +6,7 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="PLUGIN">
-            <directory suffix="Test.php">./tests</directory>
-            <exclude>./tests/kirby</exclude>
+            <directory suffix="Test.php">./tests/unit</directory>
         </testsuite>
     </testsuites>
     <php>

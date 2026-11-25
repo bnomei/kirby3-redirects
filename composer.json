@@ -3,7 +3,7 @@
   "type": "kirby-plugin",
   "description": "Setup performant HTTP Status Code Redirects from within the Kirby Panel",
   "homepage": "https://github.com/bnomei/kirby3-redirects",
-  "version": "5.4.0",
+  "version": "6.0.0",
   "license": "MIT",
   "authors": [
     {
@@ -13,7 +13,7 @@
   ],
   "keywords": [
     "kirby",
-    "kirby5",
+    "kirby6",
     "kirby-cms",
     "kirby-plugin",
     "redirect",
@@ -36,6 +36,7 @@
     "defense"
   ],
   "config": {
+    "vendor-dir": "tests/vendor",
     "optimize-autoloader": true,
     "sort-packages": true,
     "allow-plugins": {
@@ -43,7 +44,7 @@
       "pestphp/pest-plugin": true
     },
     "platform": {
-      "php": "8.2.0"
+      "php": "8.3.0"
     }
   },
   "autoload": {
@@ -52,33 +53,26 @@
     }
   },
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.3",
     "getkirby/composer-installer": "^1.2"
   },
   "require-dev": {
-    "getkirby/cms": "^5.0.0-alpha.4",
-    "larastan/larastan": "^v3.0.0",
+    "getkirby/cms": "^6.0",
     "laravel/pint": "^1.13",
     "pestphp/pest": "^v3.5.1",
+    "phpstan/phpstan": "^2.1",
     "spatie/ray": "^1.39"
   },
   "scripts": {
-    "stan": "./vendor/bin/phpstan",
-    "fix": "./vendor/bin/pint",
-    "test": "./vendor/bin/pest --profile",
+    "stan": "phpstan",
+    "fix": "pint",
+    "test": "pest --profile",
     "dist": [
       "composer fix",
-      "composer install --no-dev --optimize-autoloader",
+      "COMPOSER_VENDOR_DIR=vendor composer install --no-dev --optimize-autoloader",
       "git rm -rf --cached .; git add .;"
     ],
-    "kirby": [
-      "composer install",
-      "composer update",
-      "composer install --working-dir=tests/kirby --no-dev --optimize-autoloader",
-      "composer update --working-dir=tests/kirby",
-      "sed -i.bak 's/function dump(/function xdump(/g' tests/kirby/config/helpers.php",
-      "sed -i.bak 's/function e(/function xe(/g' tests/kirby/config/helpers.php"
-    ]
+    "kirby": "@composer install"
   },
   "extra": {
     "kirby-cms-path": "tests/kirby"

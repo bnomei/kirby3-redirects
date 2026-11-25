@@ -21,7 +21,7 @@ fields:
         label:
           en: "Status Code"
           de: "Status Code"
-        default: '301'
+        default: '_301'
         type: select
         options:
           '_300': '300: Multiple Choices'

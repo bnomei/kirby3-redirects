@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-
 use Bnomei\Redirects;
 
 test('construct', function () {
@@ -238,7 +236,8 @@ test('shield redirects keep priority over user redirects', function () {
 });
 test('append remove', function () {
     $redirects = new Redirects;
-    $old = file_get_contents(__DIR__.'/content/site.txt');
+    $file = kirby()->root('content').'/site.txt';
+    $old = file_get_contents($file);
 
     $hash = md5((string) time());
     $success = $redirects->append(
@@ -251,7 +250,7 @@ test('append remove', function () {
     ]);
     expect($success)->toBeTrue();
     $this->assertStringContainsString($hash, file_get_contents(
-        __DIR__.'/content/site.txt'
+        $file
     ));
 
     $success = $redirects->remove(
@@ -264,7 +263,7 @@ test('append remove', function () {
     ]);
     expect($success)->toBeTrue();
     $this->assertStringNotContainsString($hash, file_get_contents(
-        __DIR__.'/content/site.txt'
+        $file
     ));
 
     // can not update if is not a site/page
@@ -275,5 +274,5 @@ test('append remove', function () {
     expect($success)->toBeFalse();
 
     // restore
-    file_put_contents(__DIR__.'/content/site.txt', $old);
+    file_put_contents($file, $old);
 });

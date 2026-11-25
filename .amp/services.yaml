@@ -1,0 +1,7 @@
+services:
+  panel:
+    command: php tests/panel/seed.php && php -S "0.0.0.0:$PORT" -t tests/panel/public tests/kirby/router.php
+    health: /plugin-redirects/codes
+    portal:
+      url: /panel
+      title: Kirby Redirects Panel

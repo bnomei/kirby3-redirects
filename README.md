@@ -1,7 +1,7 @@
 # Kirby Redirects
 
-[![Kirby 5](https://flat.badgen.net/badge/Kirby/5?color=ECC748)](https://getkirby.com)
-![PHP 8.2](https://flat.badgen.net/badge/PHP/8.2?color=4E5B93&icon=php&label)
+[![Kirby 6](https://flat.badgen.net/badge/Kirby/6?color=ECC748)](https://getkirby.com)
+![PHP 8.3+](https://flat.badgen.net/badge/PHP/8.3+?color=4E5B93&icon=php&label)
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redirects?color=ae81ff&icon=github&label)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-redirects?color=272822&icon=github&label)
 [![Coverage](https://flat.badgen.net/codeclimate/coverage/bnomei/kirby3-redirects?icon=codeclimate&label)](https://codeclimate.com/github/bnomei/kirby3-redirects)
@@ -167,6 +167,16 @@ $success = site()->removeRedirects([
 
 Redirects are checked against exact redirect entries first and then against the configured redirect map. Unmatched public
 requests are not written to the cache.
+
+## Testing on Kirby 6
+
+Run `composer install` to use the stable Kirby release pinned in `composer.lock`, then `composer test` and `composer stan`.
+With `agent-browser` and Chromium installed, `tests/panel/check` creates a disposable site, logs into the real Panel,
+and checks both blueprints. It saves, edits and deletes a rule and checks the HTTP status and Location after each save.
+
+In an Amp orb, run `amp orb services ensure` and open **Kirby Redirects Panel** to try it yourself. Sign in as
+`editor@example.test`; the generated password is in `tests/panel/state/password` in the orb. The demo's content and
+account stay outside the public directory and are separate from the automated checks.
 
 ## Similar Plugins
 

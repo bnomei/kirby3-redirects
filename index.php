@@ -5,7 +5,9 @@ use Kirby\Content\Field;
 use Kirby\Http\Response;
 use Kirby\Http\Route;
 
-@include_once __DIR__.'/vendor/autoload.php';
+if (! class_exists(Redirects::class)) {
+    require_once __DIR__.'/vendor/autoload.php';
+}
 
 Kirby::plugin('bnomei/redirects', [
     'options' => [
@@ -116,9 +118,11 @@ Kirby::plugin('bnomei/redirects', [
                 $allowed = empty($result) === true;
             }
             if ($final === true && $allowed) {
-                $isPanel = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->panel());
-                $isApi = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->api());
-                $isMedia = str_contains(kirby()->request()->url()->toString(), kirby()->urls()->media());
+                $kirby = kirby();
+                $url = $kirby->url('current').'/';
+                $isPanel = str_starts_with($url, $kirby->url('panel').'/');
+                $isApi = str_starts_with($url, $kirby->url('api').'/');
+                $isMedia = str_starts_with($url, rtrim($kirby->urls()->media(), '/').'/');
                 if (! $isPanel && ! $isApi && ! $isMedia) {
                     Redirects::singleton()->redirect();
                 }

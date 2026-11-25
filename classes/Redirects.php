@@ -72,7 +72,7 @@ class Redirects
     {
         if ($source instanceof Field) {
             // https://getkirby.com/docs/reference/templates/field-methods/yaml
-            $source = $source->isNotEmpty() ? $source->yaml() : []; // @phpstan-ignore-line
+            $source = $source->isNotEmpty() ? $source->yaml() : [];
         }
 
         $exact = [];
@@ -98,7 +98,7 @@ class Redirects
         if ($source instanceof Field) {
             $this->options['parent'] = $source->parent();
             // https://getkirby.com/docs/reference/templates/field-methods/yaml
-            $source = $source->isNotEmpty() ? $source->yaml() : []; // @phpstan-ignore-line
+            $source = $source->isNotEmpty() ? $source->yaml() : [];
         }
 
         $this->options['redirects'] = is_array($source) ? $source : [];

@@ -21,7 +21,7 @@ fields:
         label:
           en: "Status Code"
           de: "Status Code"
-        default: '301'
+        default: '_301'
         type: select
         options: api
         api:
@@ -29,6 +29,5 @@ fields:
           fetch: "codes"
           text: "{{ item.code }}: {{ item.label }}"
           value: "{{ item.code }}"
-
 
 

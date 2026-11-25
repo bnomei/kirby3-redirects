@@ -5,6 +5,10 @@
 *.cache
 
 /tests/kirby
+/tests/vendor
+/tests/panel/state
+/tests/panel/public/media
+/.amp/portals/
 /tests/logs
 /tests/media
 /tests/site/accounts

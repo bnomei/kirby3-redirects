@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Round-trip both shipped blueprints through the Panel and the public router.
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+mkdir -p tests/panel/state
+export REDIRECTS_PANEL_STATE
+REDIRECTS_PANEL_STATE=$(mktemp -d "$PWD/tests/panel/state/check.XXXXXX")
+export PUBLIC_URL="http://localhost:${PORT:-8000}"
+browser=(agent-browser --session "redirects-$$")
+b() { "${browser[@]}" "$@"; }
+cleanup() {
+    b close >/dev/null 2>&1 || true
+    if [[ -n ${server:-} ]]; then kill "$server" 2>/dev/null || true; fi
+    rm -rf -- "$REDIRECTS_PANEL_STATE"
+}
+trap cleanup EXIT
+
+php tests/panel/seed.php
+php -S "localhost:${PORT:-8000}" -t tests/panel/public tests/kirby/router.php >"$REDIRECTS_PANEL_STATE/server.log" 2>&1 &
+server=$!
+curl -fsS --retry 10 --retry-connrefused --retry-delay 1 "$PUBLIC_URL/plugin-redirects/codes" >/dev/null
+kill -0 "$server"
+b open "$PUBLIC_URL/panel"
+b set viewport 1200 800 2
+b wait 'input[type=email]'
+b fill 'input[type=email]' editor@example.test
+b fill 'input[type=password]' "$(cat "$REDIRECTS_PANEL_STATE/password")"
+b find role button click --name 'Log in'
+b wait --text '/old-project'
+
+response() {
+    local actual
+    actual=$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' "$PUBLIC_URL/panel-check-rule")
+    if [[ $actual != "$1 ${2:-}" ]]; then
+        echo "Expected $1 ${2:-}, got $actual" >&2
+        b snapshot -i >&2
+        cat "$REDIRECTS_PANEL_STATE/content/site.txt" >&2
+        return 1
+    fi
+}
+save() {
+    b find role button click --name Save
+    b wait --fn '!Array.from(document.querySelectorAll("button")).some(button => button.textContent.trim() === "Save")'
+}
+
+for blueprint in plugin-redirects plugin-redirects3xx; do
+    sed "s/extends: plugin-redirects$/extends: $blueprint/" tests/site/blueprints/site.yml >"$REDIRECTS_PANEL_STATE/site/blueprints/site.yml"
+    b reload
+    b wait '.k-structure-field header button[aria-label=Add]'
+    b click '.k-structure-field header button[aria-label=Add]'
+    b wait --fn 'document.querySelector("select[name=code]")?.selectedOptions[0]?.text === "301: Moved Permanently"'
+    status=_308
+    if [[ $blueprint == plugin-redirects ]]; then
+        status=_410
+        b wait --fn '!!document.querySelector("option[value=_410]")'
+    else
+        b wait --fn 'Array.from(document.querySelectorAll("select[name=code] option"), o => o.value).filter(Boolean).join() === "_300,_301,_302,_303,_304,_307,_308"'
+    fi
+    b fill 'input[name=fromuri]' /panel-check-rule
+    b fill 'input[name=touri]' /projects/ahmic
+    b select 'select[name=code]' _307
+    b click 'dialog button[type=submit]'
+    save
+    response 307 "$PUBLIC_URL/projects/ahmic"
+    b reload
+    b wait --text /panel-check-rule
+    b find role cell click --name /panel-check-rule
+    b wait --fn 'document.querySelector("select[name=code]")?.value === "_307"'
+    b select 'select[name=code]' "$status"
+    if [[ $status == _410 ]]; then b fill 'input[name=touri]' ''; fi
+    b click 'dialog button[type=submit]'
+    save
+    if [[ $status == _410 ]]; then response 410; else response 308 "$PUBLIC_URL/projects/ahmic"; fi
+    b find role cell click --name /panel-check-rule
+    b click 'dialog button:has(svg[data-type=trash])'
+    b find role button click --name Delete
+    save
+    response 404
+    echo "$blueprint: default 301, saved 307, edited ${status#_}, deleted 404"
+done

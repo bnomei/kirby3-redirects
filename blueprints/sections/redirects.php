@@ -29,13 +29,13 @@ return [
                         'en' => 'Status Code',
                         'de' => 'Status Code',
                     ],
-                    'default' => '301',
+                    'default' => '_301',
                     'type' => 'select',
                     'options' => Redirects::staticCache(
                         'codes',
                         fn () => array_map(
                             fn ($item) => [
-                                'text' => $item['code'].': '.$item['label'],
+                                'text' => ltrim($item['code'], '_').': '.$item['label'],
                                 'value' => $item['code'],
                             ],
                             Redirects::codes()
